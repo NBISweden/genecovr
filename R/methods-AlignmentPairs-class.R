@@ -9,7 +9,7 @@
 ##' @importFrom S4Vectors DataFrame
 ##'
 setMethod("AlignmentPairs", signature = c("GRanges", "GRanges"),
-          definition = function(query, subject, ...){
+          definition = function(query, subject, ...) {
     if (!missing(...)) {
         elementMetadata <- DataFrame(...)
     } else {
@@ -17,7 +17,7 @@ setMethod("AlignmentPairs", signature = c("GRanges", "GRanges"),
     }
     elementMetadata$query <- query
     elementMetadata$subject <- subject
-    new("AlignmentPairs", first = 1:length(query), second = 1:length(subject),
+    new("AlignmentPairs", first = seq_len(query), second = seq_len(subject),
         elementMetadata = elementMetadata)
 })
 
@@ -157,7 +157,8 @@ setMethod("repmatches", "AlignmentPairs",
 ##' qry <- GenomicRanges::GRanges(
 ##'           ranges=ranges,
 ##'           seqnames=c("t1"),
-##'           seqinfo=GenomeInfoDb::Seqinfo(seqnames=c("t1"), seqlengths=c(1050))
+##'           seqinfo=GenomeInfoDb::Seqinfo(seqnames=c("t1"),
+##'                                         seqlengths=c(1050))
 ##' )
 ##' ranges <- IRanges::IRanges(
 ##'           start=c(1000, 1000, 1000),
@@ -171,7 +172,8 @@ reduceHitCoverage <- function(x, min.match=0.9) {
     stopifnot(inherits(x, "AlignmentPairs"))
     message("Reducing hits for ", summary(x), ", min.match ", min.match)
     y <- x[matches(x) / width(query(x)) > min.match];
-    q <- GenomicRanges::reduce(query(y), ignore.strand=TRUE, with.revmap=TRUE)
+    q <- GenomicRanges::reduce(query(y), ignore.strand = TRUE,
+                               with.revmap = TRUE)
     q
 }
 
@@ -244,23 +246,23 @@ revmapList <- function(x) {
 ##'
 geneBodyCoverage <- function(x, min.match=0.9) {
     stopifnot(inherits(x, "AlignmentPairs"))
-    message("Calculating gene body coverage for ", summary(x), ", min.match ", min.match)
+    message("Calculating gene body coverage for ",
+            summary(x), ", min.match ", min.match)
     y <- reduceHitCoverage(x, min.match)
     grl <- split(y, seqnames(y))
     data <- DataFrame(
-        seqnames=seqnames(seqinfo(y)),
-        seqlengths=seqlengths(seqinfo(y)),
-        breadthOfCoverage=breadthOfCoverage(grl),
-        revmap=IRanges::IntegerList(lapply(grl, revmapList)),
-        hitCoverage=width(grl),
-        hitStart=start(grl),
-        hitEnd=end(grl)
+        seqnames = seqnames(seqinfo(y)),
+        seqlengths = seqlengths(seqinfo(y)),
+        breadthOfCoverage = breadthOfCoverage(grl),
+        revmap = IRanges::IntegerList(lapply(grl, revmapList)),
+        hitCoverage = width(grl),
+        hitStart = start(grl),
+        hitEnd = end(grl)
     )
     data$coverage <- data$breadthOfCoverage / data$seqlengths
     data$revmap.count <- unlist(lapply(data$revmap, length))
     data
 }
-
 
 
 ##' summarizeGeneBodyCoverage
@@ -275,15 +277,18 @@ geneBodyCoverage <- function(x, min.match=0.9) {
 ##' @param min.match filter out hits with fraction matching bases less
 ##'     than min.match
 ##'
-summarizeGeneBodyCoverage <- function(x, min.coverage=seq(0, 1, 0.05), min.match=0.9) {
+summarizeGeneBodyCoverage <- function(x, min.coverage=seq(0, 1, 0.05),
+                                      min.match=0.9) {
     stopifnot(inherits(x, "AlignmentPairs"))
-    message("Summarizing gene body coverage for ", summary(x), ", ", length(min.coverage), " coverage cutoffs")
+    message("Summarizing gene body coverage for ",
+            summary(x), ", ", length(min.coverage), " coverage cutoffs")
     data <- geneBodyCoverage(x, min.match)
     DataFrame(
-        count=rev(cumsum(rev(apply(table(data$coverage, cut(data$coverage, min.coverage)), 2, sum)))),
-        total=nrow(data),
-        min.coverage=min.coverage[2:length(min.coverage)],
-        min.match=min.match
+        count = rev(cumsum(rev(apply(
+            table(data$coverage, cut(data$coverage, min.coverage)), 2, sum)))),
+        total = nrow(data),
+        min.coverage = min.coverage[2:length(min.coverage)],
+        min.match = min.match
     )
 }
 
@@ -302,22 +307,28 @@ summarizeGeneBodyCoverage <- function(x, min.coverage=seq(0, 1, 0.05), min.match
 ##'     than min.match
 ##' @param nmax maximum number of subjects to count
 ##'
-countSubjectsByCoverage <- function(x, min.coverage=seq(0.25, 1, 0.25), min.match=0.9, nmax=5) {
+countSubjectsByCoverage <- function(x, min.coverage=seq(0.25, 1, 0.25),
+                                    min.match=0.9, nmax=5) {
     stopifnot(inherits(x, "AlignmentPairs"))
-    message("Counting number of subjects by coverage for ", summary(x), ", ", length(min.coverage), " coverage cutoffs")
-    data <- geneBodyCoverage(x, min.match=min.match)
-    tab <- table(factor(data$revmap.count, levels=sort(unique(c(0, data$revmap.count)))),
-                 cut(data$coverage, min.coverage))[, (length(min.coverage) - 1):1]
+    message("Counting number of subjects by coverage for ",
+            summary(x), ", ", length(min.coverage), " coverage cutoffs")
+    data <- geneBodyCoverage(x, min.match = min.match)
+    tab <- table(factor(
+        data$revmap.count,
+        levels = sort(unique(c(0, data$revmap.count)))),
+        cut(data$coverage, min.coverage))[, (length(min.coverage) - 1):1]
     z <- t(as.table(apply(tab, 1, cumsum)))
-    z[1,] <- nrow(data) - apply(z[2:nrow(z),], 2, sum)
+    z[1, ] <- nrow(data) - apply(z[2:nrow(z), ], 2, sum)
     z.df <- DataFrame(z)
     colnames(z.df) <- c("n.subjects", "min.coverage", "Freq")
     z.df$min.match <- min.match
     if (nmax < max(as.numeric(z.df$n.subjects)))
         nmax <- max(as.numeric(z.df$n.subjects))
-    z.df$n.subjects <- factor(z.df$n.subjects, levels=c(0, nmax:1))
+    z.df$n.subjects <- factor(z.df$n.subjects, levels = c(0, nmax:1))
     levels(z.df$n.subjects)[1] <- "filtered"
     levels(z.df$min.coverage) <- rev(min.coverage[1:(length(min.coverage) - 1)])
-    z.df$min.coverage <- factor(z.df$min.coverage, levels=min.coverage[1:(length(min.coverage) - 1)])
+    z.df$min.coverage <- factor(
+        z.df$min.coverage,
+        levels = min.coverage[1:(length(min.coverage) - 1)])
     z.df
 }

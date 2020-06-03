@@ -29,8 +29,9 @@ NULL
 ##' sinfo <- readFastaIndex(fai)
 ##'
 readFastaIndex <- function(fai, ...) {
-    data <- read.table(fai, header=FALSE,
-                       col.names=c("NAME", "LENGTH", "OFFSET", "LINEBASES", "LINEWIDTH"),
-                       as.is=TRUE)
+    data <- read.table(fai, header = FALSE,
+                       col.names = c("NAME", "LENGTH", "OFFSET",
+                                     "LINEBASES", "LINEWIDTH"),
+                       as.is = TRUE)
     GenomeInfoDb::Seqinfo(data$NAME, data$LENGTH, ...)
 }

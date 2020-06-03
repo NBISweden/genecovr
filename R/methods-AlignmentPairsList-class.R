@@ -25,7 +25,7 @@ setMethod("AlignmentPairsList", "list",
 ##'
 setMethod("as.data.frame", signature = "AlignmentPairsList",
           function(x, ..., .id="id") {
-    dplyr::bind_rows(lapply(x, as.data.frame, ...), .id=.id)
+    dplyr::bind_rows(lapply(x, as.data.frame, ...), .id = .id)
 })
 
 
@@ -64,7 +64,7 @@ autoplot.AlignmentPairsList <- function(object, aes, vars, ..., which="point") {
     else if (which == "bar")
         p <- p + geom_bar(...)
     if (!missing(vars))
-        p <- p + facet_wrap( {{ vars }} )
+        p <- p + facet_wrap({{ vars }})
     p
 }
 

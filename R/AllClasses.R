@@ -4,14 +4,11 @@ setClassUnion("integerOrMissing", c("integer", "missing", "logical"))
 
 
 .valid.AlignmentPairs <- function(object) {
-    validcols <- c()
     if (length(object)) {
         if (!("query" %in% colnames(elementMetadata(object))))
             return(paste0("AlignmentPairs must have a 'query' column"))
         if (!("subject" %in% colnames(elementMetadata(object))))
             return(paste0("AlignmentPairs must have a 'subject' column"))
-        #if (!(all(colnames(elementMetadata(object)) %in% validcols)))
-        #    return(paste0("AlignmentPairs metadata columns must be any of  ", paste(validcols, collapse=",")))
     }
 }
 

@@ -18,7 +18,9 @@ NULL
     "qBaseInsert", # Number of bases inserted in query
     "tNumInsert", # Number of inserts in target
     "tBaseInsert", # Number of bases inserted in target
-    "strand", # "+" or "-" for query strand. For translated alignments, second "+"or "-" is for target genomic strand.
+    "strand", # "+" or "-" for query strand. For translated
+              # alignments, second "+"or "-" is for target genomic
+              # strand.
     "qName", # Query sequence name
     "qSize", # Query sequence size.
     "qStart", # Alignment start position in query
@@ -27,10 +29,16 @@ NULL
     "tSize", # Target sequence size
     "tStart", # Alignment start position in target
     "tEnd", # Alignment end position in target
-    "blockCount", # Number of blocks in the alignment (a block contains no gaps)
-    "blockSizes", # Comma-separated list of sizes of each block. If the query is a protein and the target the genome, blockSizes are in amino acids. See below for more information on protein query PSLs.
-    "qStarts", # Comma-separated list of starting positions of each block in query
-    "tStarts" # Comma-separated list of starting positions of each block in target
+    "blockCount", # Number of blocks in the alignment (a block
+                  # contains no gaps)
+    "blockSizes", # Comma-separated list of sizes of each block. If
+                  # the query is a protein and the target the genome,
+                  # blockSizes are in amino acids. See below for more
+                  # information on protein query PSLs.
+    "qStarts", # Comma-separated list of starting positions of each
+               # block in query
+    "tStarts" # Comma-separated list of starting positions of each
+              # block in target
 )
 
 
@@ -40,7 +48,7 @@ NULL
                                lengths = lengths,
                                stringsAsFactors = FALSE))
     if (any(duplicated(sinfo$names)))
-        sinfo <- sinfo[!duplicated(sinfo$names),]
+        sinfo <- sinfo[!duplicated(sinfo$names), ]
     GenomeInfoDb::Seqinfo(sinfo$names, sinfo$lengths)
 }
 
@@ -71,12 +79,13 @@ NULL
 ##'       package="genecovr")
 ##' ap <- readPsl(fn)
 ##'
-readPsl <- function(filename, seqinfo.query=NULL, seqinfo.sbjct=NULL, metadata=list(), ...) {
+readPsl <- function(filename, seqinfo.query=NULL, seqinfo.sbjct=NULL,
+                    metadata=list(), ...) {
     message("reading file ", filename)
     start_time <- Sys.time()
     con <- file(filename, "r")
     on.exit(close(con))
-    data <- read.table(con, header=FALSE)
+    data <- read.table(con, header = FALSE)
     colnames(data) <- .header
     ## Create query and subject
     if (is.null(seqinfo.query))
@@ -108,7 +117,8 @@ readPsl <- function(filename, seqinfo.query=NULL, seqinfo.sbjct=NULL, metadata=l
         blockStart = data$tStarts)
     ap <- AlignmentPairs(query, sbjct)
     ## Add data columns
-    i.values <- match(c("matches", "misMatches", "repMatches", "nCount"), .header)
+    i.values <- match(c("matches", "misMatches", "repMatches", "nCount"),
+                      .header)
     values(ap)[, .header[i.values]] <- data[, .header[i.values]]
     message("Processed ", nrow(data), " lines in ",
             format(Sys.time() - start_time, digits = 2))

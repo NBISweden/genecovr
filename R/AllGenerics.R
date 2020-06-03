@@ -12,7 +12,7 @@
 ##' @export
 ##' @rdname AlignmentPairs-class
 ##'
-setGeneric("AlignmentPairs", signature=c("query", "subject"),
+setGeneric("AlignmentPairs", signature = c("query", "subject"),
            function(query, subject, ...)
     standardGeneric("AlignmentPairs"))
 
