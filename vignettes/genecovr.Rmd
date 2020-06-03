@@ -64,10 +64,15 @@ are `GRanges` objects or objects derived from the `GRanges`class.
 
 # Analysing gene body coverage
 
-The file `transcripts2ref.psl` contains gmap results in psl format of
-a mapping of transcripts to a non-polished and polished reference. We
-load the fasta index related to the references and transcripts and
-then load the alignments. The results are stored in an
+In this section we analyse the mapping of a transcriptome to a
+non-polished and polished assembly. The mapping results consist of two
+gmap files in psl format, `transcripts2nonpolished.psl` and
+`transcripts2polished.psl`. In addition there are fasta index files
+for both assemblies (`nonpolished.fai` and `polished.fai`) and for the
+transcriptome (`transcripts.fai`). The fasta indices are used to
+generate `Seqinfo` objects that can be used to set sequence
+information on the parsed output. We load the fasta indices and parse
+the psl files with `readPsl`, storing the results in an
 `AlignmentPairsList` for convenience.
 
 ``` {r gbc-load-data}
@@ -198,6 +203,3 @@ and plot the results
 ```{r gbc-plot-ncontigs-per-transcript}
 ggplot(data=data, aes(x=factor(min.coverage), y=Freq, fill=n.subjects)) + geom_bar(stat='identity', position=position_stack()) + scale_fill_viridis_d(begin=1, end=0) + facet_wrap(~ dataset, nrow=1, labeller=label_both)
 ```
-
-## Match and indel distributions
-
