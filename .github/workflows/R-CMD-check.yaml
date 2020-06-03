@@ -1,0 +1,22 @@
+on: [push, pull_request]
+
+name: R-CMD-check
+
+jobs:
+  R-CMD-check:
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: r-lib/actions/setup-r@master
+      - uses: r-lib/actions/setup-pandoc@master
+      - name: Install dependencies
+        run: |
+          install.packages(c("remotes", "rcmdcheck", "knitr"))
+          deps <- remotes::dev_package_deps(dependencies = TRUE)
+          install.packages(deps$package[!is.na(deps$available)])
+          if (!requireNamespace("BiocManager", quietly = TRUE)) {install.packages("BiocManager")}
+          BiocManager::install(deps$package[is.na(deps$available)])
+        shell: Rscript {0}
+      - name: Check
+        run: rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "error")
+        shell: Rscript {0}

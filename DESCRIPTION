@@ -1,0 +1,37 @@
+Package: genecovr
+Title: Gene body coverage analysis to evaluate genome assemblies
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Per",
+           family = "Unneberg",
+           role = c("aut", "cre"),
+           email = "per.unneberg@nbis.se",
+           comment = c(ORCID = "0000-0001-5735-3315"))
+Description: Gene body coverage analysis to evaluate genome assemblies.
+Depends:
+	R (>= 3.5)
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Imports:
+	BiocGenerics,
+	Biostrings,
+	GenomeInfoDb,
+	GenomicRanges (>= 1.32.0),
+	IRanges,
+	S4Vectors,
+	dplyr,
+	ggplot2,
+	methods,
+	rlang,
+	tidyr,
+	utils,
+	viridis
+Suggests:
+	knitr,
+	rmarkdown,
+	testthat
+VignetteBuilder:
+	knitr
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.0

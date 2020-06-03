@@ -1,0 +1,33 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# genecovr
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+Perform gene body coverage analyses in R to evaluate genome assembly
+quality.
+
+## Installation
+
+You can install the released version of genecovr from [NBIS
+GitHub](https://github.com/nbis) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("NBISweden/genecovr")
+```
+

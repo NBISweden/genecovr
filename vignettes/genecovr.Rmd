@@ -1,0 +1,203 @@
+---
+title: "Gene body coverage analysis in R"
+author: "Per Unneberg"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+biblio-style: plain
+bibliography: bibliography.bib
+---
+
+# About
+
+This vignette describes analyses of gene body coverage and other
+genome assembly evaluation metrics with in R using the `genecovr`
+package. `ripr` contains functionality for parsing alignment files,
+calculating gene body coverages, and generating simple QC metrics to
+assess assembly quality output. Before we start with the example
+analysis, we describe how `genecovr` represents pairwise alignments.
+
+## R setup
+
+```{r knitr-setup, echo=FALSE, cache=FALSE}
+library(knitr)
+knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE,
+                      fig.width=8, fig.height=6, autodep=TRUE,
+                      cache=FALSE, include=TRUE, eval=TRUE, tidy=FALSE,
+                      dev=c('png'))
+knitr::knit_hooks$set(inline = function(x) {
+  prettyNum(x, big.mark=" ")
+})
+```
+
+
+```{r r-setup, cache=FALSE}
+library(genecovr)
+library(ggplot2)
+library(S4Vectors)
+library(tidyr)
+library(rlang)
+```
+
+```{r ggplot-theme, cache=FALSE}
+library(viridis)
+library(RColorBrewer)
+bw <- theme_bw(base_size=18) %+replace% theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
+theme_set(bw)
+color.pal.4 <- brewer.pal(name = "Paired", n = 4)
+```
+
+## On object representation of pairwise sequence alignments
+
+`genecovr` has functionality to read pairwise sequence alignment files
+and converts the pairwise alignments to `AlignmentPairs` objects. An
+`AlignmentPairs` object is a subclass of the Bioconductor class
+`S4Vectors::Pairs`. A `Pairs` object in turn aligns two vectors along
+slot names `first` and `second`, and the `AlignmentPairs` object adds
+slots for the query and subject, and possibly extra slots related to
+additional information in the alignment file. The query and subject
+are `GRanges` objects or objects derived from the `GRanges`class.
+
+
+# Analysing gene body coverage
+
+The file `transcripts2ref.psl` contains gmap results in psl format of
+a mapping of transcripts to a non-polished and polished reference. We
+load the fasta index related to the references and transcripts and
+then load the alignments. The results are stored in an
+`AlignmentPairsList` for convenience.
+
+``` {r gbc-load-data}
+assembly.fai.fn <- list(
+    nonpol = system.file("extdata", "nonpolished.fai", package="genecovr"),
+    pol = system.file("extdata", "polished.fai", package="genecovr")
+)
+transcripts.fai.fn <- system.file("extdata", "transcripts.fai", package="genecovr")
+
+assembly.sinfo <- endoapply(assembly.fai.fn, readFastaIndex)
+transcripts.sinfo <- readFastaIndex(transcripts.fai.fn)
+
+psl.fn <- list(
+    nonpol = system.file("extdata", "transcripts2nonpolished.psl", package="genecovr"),
+    pol = system.file("extdata", "transcripts2polished.psl", package="genecovr")
+)
+
+apl <- AlignmentPairsList(
+    lapply(names(psl.fn), function(x) {
+        readPsl(psl.fn[[x]], seqinfo.sbjct=assembly.sinfo[[x]], seqinfo.query=transcripts.sinfo)
+    })
+)
+names(apl) <- names(psl.fn)
+```
+
+## Plot ratio matches to width of alignment regions
+
+We first plot the ratio of matches to width of alignments with respect
+to the transcripts.
+
+``` {r gbc-plot-alignment-width}
+plot(apl, aes(x=id, y=matches/query.width), which="violin") + ylim(0.8, 1)
+```
+
+There is a clear shift to higher percentage matches in the polished
+assembly, as expected.
+
+## Plot summary indel and match distributions
+
+We can also select multiple columns to plot in the
+`AlignmentPairsList`.
+
+```{r gbc-plot-match-indel}
+cnames <- c("misMatches", "query.NumInsert", "query.BaseInsert")
+plot(apl, aes(x=id, y=get_expr(enquo(cnames)))) + geom_violin() + facet_wrap(. ~ name, scales="free")
+```
+
+```{r gbc-plot-match-indel-boxplot}
+plot(apl, aes(x=id, y=get_expr(enquo(cnames)))) + geom_boxplot() + facet_wrap(. ~ name, scales="free")
+```
+
+```{r gbc-plot-match-indel-log10-boxplot}
+plot(apl, aes(x=id, y=get_expr(enquo(cnames)))) + geom_boxplot() + facet_wrap(. ~ name, scales="free") + scale_y_continuous(trans="log10")
+```
+
+## Plot number of indels
+
+As assembly quality improves, the number of indels go down.
+
+```{r gbc-plot-qnuminsert}
+x <- as.data.frame(apl)
+x$cuts <- cut(x$query.NumInsert, c(0:4, Inf), include.lowest=TRUE)
+levels(x$cuts) <- c(0:3, ">3")
+x$cuts <- factor(x$cuts, levels=c(">3", 3:0))
+ggplot(x, aes(id)) +
+    geom_bar(aes(fill=cuts)) +
+    scale_fill_viridis_d(name="qNumInsert", begin=1, end=0)
+```
+
+## Gene body coverage
+
+
+The function `geneBodyCoverage` takes an `AlignmentPairs` object and
+summarizes breadth of coverage and number of subject hits per
+transcript.
+
+``` {r gbc-make-gene-body-coverage}
+gbc <- lapply(apl, geneBodyCoverage, min.match=0.1)
+```
+
+A summary can be obtained with the `summarizeGeneBodyCoverage`
+function. We define a range of minimum match hit cutoffs to filter out
+hits with too few matches in the aligned region. 
+
+``` {r gbc-summarize-gene-body-coverage}
+min.match <- c(0.25, 0.5, 0.75, 0.9)
+names(min.match) <- min.match
+gbc.summary <- lapply(apl, function(x) {
+    y <- do.call("rbind", lapply(min.match, function(mm) {
+                              summarizeGeneBodyCoverage(x, min.match=mm)
+        }))
+    })
+```
+
+We combine the data
+
+``` {r gbc-plot-gene-body-coverage-combine-data}
+library(dplyr)
+data <- dplyr::bind_rows(lapply(gbc.summary, data.frame), .id="dataset")
+```
+and plot the resulting coverages
+
+```{r gbc-plot-gene-body-coverage}
+h <- max(data$total)
+hmax <- ceiling(h/100) * 100
+ggplot(subset(data, min.match==0.25), aes(x=min.coverage, y=count, group=dataset, color=dataset)) +
+    geom_abline(slope=0, intercept=h) +
+    geom_point(aes(shape=dataset, color=dataset), size=2) + geom_line() +
+    scale_color_viridis_d() + scale_y_continuous(breaks=c(pretty(data$count)), limits=c(0, hmax))
+```
+
+## Number of contigs per transcript
+
+A fragmented assembly will lead to more transcripts mapping to several
+contigs. We calculate the number of subjects by coverage cutoff with
+the function `countSubjectsByCoverage`
+
+```{r gbc-ncontigs-per-transcript}
+data <- dplyr::bind_rows(lapply(
+                   lapply(apl, countSubjectsByCoverage),
+                   data.frame),
+                   .id="dataset")
+
+```
+
+and plot the results
+
+```{r gbc-plot-ncontigs-per-transcript}
+ggplot(data=data, aes(x=factor(min.coverage), y=Freq, fill=n.subjects)) + geom_bar(stat='identity', position=position_stack()) + scale_fill_viridis_d(begin=1, end=0) + facet_wrap(~ dataset, nrow=1, labeller=label_both)
+```
+
+## Match and indel distributions
+
