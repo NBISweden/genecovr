@@ -5,6 +5,8 @@
 
 <!-- badges: start -->
 
+[![R build
+status](https://github.com/NBISweden/genecovr/workflows/R-CMD-check/badge.svg)](https://github.com/NBISweden/genecovr/actions)
 <!-- badges: end -->
 
 Perform gene body coverage analyses in R to evaluate genome assembly
