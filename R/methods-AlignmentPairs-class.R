@@ -17,7 +17,9 @@ setMethod("AlignmentPairs", signature = c("GRanges", "GRanges"),
     }
     elementMetadata$query <- query
     elementMetadata$subject <- subject
-    new("AlignmentPairs", first = seq_len(query), second = seq_len(subject),
+    new("AlignmentPairs",
+        first = seq_along(query),
+        second = seq_along(subject),
         elementMetadata = elementMetadata)
 })
 
