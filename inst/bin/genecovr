@@ -129,7 +129,6 @@ apl <- AlignmentPairsList(
     }, BPPARAM=bpparam)
 )
 names(apl) <- names(psl.fn)
-message(names(apl))
 
 ##------------------------------
 ## Plotting
