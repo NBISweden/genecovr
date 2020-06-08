@@ -107,6 +107,7 @@ bpparam <- MulticoreParam(cpus)
 
 ## Load sequence info for transcripts and assemblies
 suppressPackageStartupMessages(library(Biostrings))
+suppressPackageStartupMessages(library(GenomeInfoDb))
 .getSeqinfo <- function(fn) {
     if (is.na(fn))
         return(NULL)
