@@ -47,7 +47,10 @@ setMethod("as.data.frame", signature = "AlignmentPairsList",
 ##'
 autoplot.AlignmentPairsList <- function(object, aes, vars, ..., which="point") {
     data <- as.data.frame(object)
-    if (length(aes$y) > 1) {
+    n <- 1
+    if (grepl("enquo", as_label(aes$y)))
+        n <- length(eval(get_expr(aes$y)))
+    if (n > 1) {
         data <- pivot_longer(data, cols = !!aes$y)
         aes$y <- quo_set_expr(aes$y, as.symbol("value"))
     }
