@@ -33,7 +33,7 @@ setMethod("as.data.frame", signature = "AlignmentPairsList",
 ##'
 ##' @importFrom ggplot2 autoplot ggplot geom_point geom_boxplot
 ##'     geom_violin geom_density facet_wrap geom_bar
-##' @importFrom rlang enquo quo_set_expr
+##' @importFrom rlang enquo quo_set_expr as_label get_expr
 ##' @importFrom tidyr pivot_longer
 ##'
 ##' @param object AlignmentPairsList
