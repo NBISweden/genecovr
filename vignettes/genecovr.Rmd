@@ -80,10 +80,13 @@ assembly.fai.fn <- list(
     nonpol = system.file("extdata", "nonpolished.fai", package="genecovr"),
     pol = system.file("extdata", "polished.fai", package="genecovr")
 )
-transcripts.fai.fn <- system.file("extdata", "transcripts.fai", package="genecovr")
+transcripts.fai.fn <- list(
+    nonpol = system.file("extdata", "transcripts.fai", package="genecovr"),
+    pol = system.file("extdata", "transcripts.fai", package="genecovr")
+)
 
 assembly.sinfo <- endoapply(assembly.fai.fn, readFastaIndex)
-transcripts.sinfo <- readFastaIndex(transcripts.fai.fn)
+transcripts.sinfo <- endoapply(transcripts.fai.fn, readFastaIndex)
 
 psl.fn <- list(
     nonpol = system.file("extdata", "transcripts2nonpolished.psl", package="genecovr"),
@@ -92,7 +95,7 @@ psl.fn <- list(
 
 apl <- AlignmentPairsList(
     lapply(names(psl.fn), function(x) {
-        readPsl(psl.fn[[x]], seqinfo.sbjct=assembly.sinfo[[x]], seqinfo.query=transcripts.sinfo)
+        readPsl(psl.fn[[x]], seqinfo.sbjct=assembly.sinfo[[x]], seqinfo.query=transcripts.sinfo[[x]])
     })
 )
 names(apl) <- names(psl.fn)
@@ -117,7 +120,7 @@ We can also select multiple columns to plot in the
 
 ```{r gbc-plot-match-indel}
 cnames <- c("misMatches", "query.NumInsert", "query.BaseInsert")
-plot(apl, aes(x=id, y=get_expr(enquo(cnames)))) + geom_violin() + facet_wrap(. ~ name, scales="free")
+plot(apl, aes(x=id, y=get_expr(enquo(cnames))), which="violin") + facet_wrap(. ~ name, scales="free")
 ```
 
 ```{r gbc-plot-match-indel-boxplot}
