@@ -27,8 +27,6 @@ optional arguments:
     q('no')
 }
 
-suppressPackageStartupMessages(library(devtools))
-suppressPackageStartupMessages(devtools::load_all())
 suppressPackageStartupMessages(library(genecovr))
 
 parseOption <- function(opts, args, default) {
