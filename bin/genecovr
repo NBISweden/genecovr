@@ -1,0 +1,242 @@
+#!/usr/bin/env Rscript
+
+args = commandArgs(TRUE)
+if (length(args) == 0L || any(c('-h', '--help') %in% args)) {
+    message('usage: genecovr [-h] [-v] [-p number]
+                             [-d OUTPUT_DIRECTORY] [--height HEIGHT]
+                             [--width WIDTH]
+                             csvfile
+
+positional arguments:
+  csvfile               csv-delimited file with columns
+                            1. data label
+                            2. mapping file (supported formats: psl)
+                            3. assembly file (fasta or fasta index)
+                            4. transcript file (fasta or fasta index)
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v, --verbose         print extra output
+  -p number, --cpus number
+                        number of cpus [default 1]
+  -d OUTPUT_DIRECTORY, --output-directory OUTPUT_DIRECTORY
+                        output directory
+  --height HEIGHT       figure height in inches [default 6.0]
+  --width WIDTH         figure width in inches [default 6.0]
+')
+    q('no')
+}
+
+suppressPackageStartupMessages(library(devtools))
+suppressPackageStartupMessages(devtools::load_all())
+suppressPackageStartupMessages(library(genecovr))
+
+parseOption <- function(opts, args, default) {
+    if (!any(opts %in% args))
+        return(list(default, args))
+    if ((length(opts) == 1) && is.logical(default)) {
+        m <- match(opts, args)
+        args <- args[-m]
+        return(list(!default, args))
+    }
+    if ((length(opts) == 1)) {
+        m <- match(opts, args)
+        res <- as(args[m + 1], class(default))
+        stopifnot(inherits(res, class(default)))
+        args <- args[-(m + 1)]
+        args <- args[-m]
+        return(list(res, args))
+    }
+    if ((length(opts) == 2)) {
+        m <- match(opts, args)
+        stopifnot(sum(!is.na(m)) == 1)
+        i <- m[!is.na(m)]
+        res <- as(args[i + 1], class(default))
+        args <- args[-(i + 1)]
+        args <- args[-i]
+        return(list(res, args))
+    }
+}
+
+res <- parseOption("-v", args, FALSE)
+verbose <- res[[1]]
+args <- res[[2]]
+
+res <- parseOption(c("-d", "--output-directory"), args, getwd())
+outdir <- res[[1]]
+args <- res[[2]]
+
+res <- parseOption(c("-p", "--cpus"), args, 1)
+cpus <- res[[1]]
+args <- res[[2]]
+
+res <- parseOption(c("--height"), args, 6.0)
+fig.height <- res[[1]]
+args <- res[[2]]
+
+res <- parseOption(c("--width"), args, 6.0)
+fig.width <- res[[1]]
+args <- res[[2]]
+
+if (length(args) > 1)
+    stop("unsupported or too many arguments in args: ", args)
+if (!(length(args) == 1))
+    stop("csvfile argument is missing")
+
+csvfile <- args[1]
+message("Reading data frame file")
+indata <- read.csv(csvfile, header=FALSE,
+                   colClasses=c("factor", "character", "character", "character"))
+colnames(indata) <- c("dataset", "psl", "assembly", "trxset")
+
+psl.fn <- indata$psl
+names(psl.fn) <- indata$dataset
+assembly.fn <- indata$assembly
+names(assembly.fn) <- indata$dataset
+transcripts.fn <- indata$trxset
+names(transcripts.fn) <- indata$dataset
+
+## Working directory
+curdir <- getwd()
+
+## Create output directory
+if (!dir.exists(outdir))
+    dir.create(outdir, showWarnings = TRUE, recursive = FALSE, mode = "0777")
+
+## Set cores
+suppressPackageStartupMessages(library(BiocParallel))
+bpparam <- MulticoreParam(cpus)
+
+## Load sequence info for transcripts and assemblies
+suppressPackageStartupMessages(library(Biostrings))
+.getSeqinfo <- function(fn) {
+    if (grepl("(.fai)$", fn)) {
+        readFastaIndex(fn)
+    } else {
+        seqinfo(readDNAStringSet(fn))
+    }
+}
+transcripts.sinfo <- lapply(transcripts.fn, .getSeqinfo)
+assembly.sinfo <- lapply(assembly.fn, .getSeqinfo)
+
+## Read psl files
+apl <- AlignmentPairsList(
+    bplapply(names(psl.fn), function(x) {
+        readPsl(psl.fn[[x]],
+                seqinfo.sbjct=assembly.sinfo[[x]],
+                seqinfo.query=transcripts.sinfo[[x]])
+    }, BPPARAM=bpparam)
+)
+names(apl) <- names(psl.fn)
+message(names(apl))
+
+##------------------------------
+## Plotting
+##------------------------------
+suppressPackageStartupMessages(library(ggplot2))
+suppressPackageStartupMessages(library(viridis))
+
+
+##--------------------
+## Plot alignment matches to width
+##--------------------
+message("Making basic mismatch plots...")
+outfile <- file.path(outdir, "width_violin.pdf")
+p <- plot(apl, aes(x=id, y=matches/query.width), which="violin") + ylim(0.7, 1)
+ggsave(outfile, plot=p, width=fig.width, height=fig.height)
+
+##--------------------
+## Plot match indel
+##--------------------
+outfile <- file.path(outdir, "match_indel.violin.pdf")
+cnames <- c("misMatches", "query.NumInsert", "query.BaseInsert")
+p <- plot(apl, aes(x=id, y=get_expr(enquo(cnames))), which="violin") +
+    facet_wrap(. ~ name, scales="free")
+ggsave(outfile, plot=p, width=fig.width, height=fig.height)
+
+outfile <- file.path(outdir, "match_indel.boxplot.pdf")
+p <- plot(apl, aes(x=id, y=get_expr(enquo(cnames))), which="boxplot") +
+    facet_wrap(. ~ name, scales="free")
+ggsave(outfile, plot=p, width=fig.width, height=fig.height)
+
+outfile <- file.path(outdir, "match_indel.boxplot.log10.pdf")
+p <- plot(apl, aes(x=id, y=get_expr(enquo(cnames))), which="boxplot") +
+    facet_wrap(. ~ name, scales="free") + scale_y_continuous(trans="log10")
+ggsave(outfile, plot=p, width=fig.width, height=fig.height)
+
+
+## FIXME: number of levels should be parametrized via option
+outfile <- file.path(outdir, "qnuminsert.pdf")
+x <- as.data.frame(apl)
+x$cuts <- cut(x$query.NumInsert, c(0:4, Inf), include.lowest=TRUE)
+levels(x$cuts) <- c(0:3, ">3")
+x$cuts <- factor(x$cuts, levels=c(">3", 3:0))
+p <- ggplot(x, aes(id)) +
+    geom_bar(aes(fill=cuts)) +
+    scale_fill_viridis_d(name="qNumInsert", begin=1, end=0)
+ggsave(outfile, plot=p, width=fig.width, height=fig.height)
+
+
+##--------------------
+## Save psl data
+##--------------------
+outfile <- file.path(outdir, "psldata.csv.gz")
+message("saving ", outfile)
+write.csv(x, file=gzfile(outfile), row.names=FALSE)
+
+
+##------------------------------
+## Gene body coverage
+##------------------------------
+message("Calculating gene coverage for different cutoffs...")
+min.match <- c(0.25, 0.5, 0.75, 0.9)
+names(min.match) <- min.match
+gbc.summary <- bplapply(apl, function(x) {
+    y <- do.call("rbind", lapply(min.match, function(mm) {
+                              summarizeGeneBodyCoverage(x, min.match=mm)
+                          }))
+}, BPPARAM=bpparam)
+
+
+suppressPackageStartupMessages(library(dplyr))
+data <- dplyr::bind_rows(lapply(gbc.summary, data.frame), .id="dataset")
+
+h <- max(data$total)
+hmax <- ceiling(h/100) * 100
+
+for (mm in as.numeric(unique(min.match))) {
+    message("Plotting coverage for minimum match ", mm)
+    outfile <- file.path(outdir, paste0("gene_body_coverage.minmatch.", mm, ".pdf"))
+    p <- ggplot(subset(data, min.match==mm), aes(x=min.coverage, y=count, group=dataset, color=dataset)) +
+        geom_abline(slope=0, intercept=h) +
+        geom_point(aes(shape=dataset, color=dataset), size=2) + geom_line() +
+        scale_color_viridis_d() + scale_y_continuous(breaks=c(pretty(data$count)), limits=c(0, hmax))
+    ggsave(outfile, plot=p, width=fig.width, height=fig.height)
+}
+
+outfile <- file.path(outdir, "gene_body_coverage.csv.gz")
+message("saving ", outfile)
+write.csv(data, gzfile(outfile), row.names=FALSE)
+
+
+##------------------------------
+## Plot number of contigs per transcript
+##------------------------------
+## FIXME: do for more mismatch cutoffs
+message("calculating number of contigs per transcript")
+mm <- 0.75
+data <- dplyr::bind_rows(lapply(
+                   lapply(apl, countSubjectsByCoverage, min.match=mm),
+                   data.frame),
+                   .id="dataset")
+
+p <- ggplot(data=data, aes(x=factor(min.coverage), y=Freq, fill=n.subjects)) +
+    geom_bar(stat='identity', position=position_stack()) +
+    scale_fill_viridis_d(begin=1, end=0) + facet_wrap(~ dataset, nrow=1, labeller=label_both)
+
+outfile <- file.path(outdir, paste0("ncontigs_per_transcripts.bar.mm", mm, ".pdf"))
+ggsave(outfile, plot=p, width=fig.width, height=fig.height)
+
+outfile <- file.path(outdir, "ncontigs_per_transcripts.csv.gz")
+message("saving ", outfile)
+write.csv(data, gzfile(outfile), row.names=FALSE)
