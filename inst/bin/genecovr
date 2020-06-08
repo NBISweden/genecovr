@@ -149,6 +149,7 @@ ggsave(outfile, plot=p, width=fig.width, height=fig.height)
 ##--------------------
 ## Plot match indel
 ##--------------------
+suppressPackageStartupMessages(library(rlang))
 outfile <- file.path(outdir, "match_indel.violin.pdf")
 cnames <- c("misMatches", "query.NumInsert", "query.BaseInsert")
 p <- plot(apl, aes(x=id, y=get_expr(enquo(cnames))), which="violin") +
