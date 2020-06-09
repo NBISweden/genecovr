@@ -135,6 +135,10 @@ names(apl) <- names(psl.fn)
 ##------------------------------
 suppressPackageStartupMessages(library(ggplot2))
 suppressPackageStartupMessages(library(viridis))
+## Set theme
+gray <- theme_gray(base_size=18) %+replace% theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
+theme_set(gray)
+
 
 
 ##--------------------
@@ -142,7 +146,10 @@ suppressPackageStartupMessages(library(viridis))
 ##--------------------
 message("Making basic mismatch plots...")
 outfile <- file.path(outdir, "width_violin.pdf")
-p <- plot(apl, aes(x=id, y=matches/query.width), which="violin") + ylim(0.7, 1)
+p <- plot(apl, aes(x=id, y=matches/query.width), which="violin") +
+    scale_fill_viridis_d() +
+    theme(legend.justification = c(1, 0), legend.position = c(1, 0)) +
+    ylim(0.7, 1)
 ggsave(outfile, plot=p, width=fig.width, height=fig.height)
 
 ##--------------------
