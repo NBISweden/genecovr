@@ -107,7 +107,7 @@ We first plot the ratio of matches to width of alignments with respect
 to the transcripts.
 
 ``` {r gbc-plot-alignment-width}
-plot(apl, aes(x=id, y=matches/query.width), which="violin") + ylim(0.8, 1)
+plot(apl, aes(x=id, y=matches/query.width, fill=id), which="violin") + ylim(0.8, 1) + scale_fill_viridis_d()
 ```
 
 There is a clear shift to higher percentage matches in the polished
@@ -124,11 +124,11 @@ plot(apl, aes(x=id, y=get_expr(enquo(cnames))), which="violin") + facet_wrap(. ~
 ```
 
 ```{r gbc-plot-match-indel-boxplot}
-plot(apl, aes(x=id, y=get_expr(enquo(cnames)))) + geom_boxplot() + facet_wrap(. ~ name, scales="free")
+plot(apl, aes(x=id, y=get_expr(enquo(cnames))), which="boxplot") + facet_wrap(. ~ name, scales="free")
 ```
 
 ```{r gbc-plot-match-indel-log10-boxplot}
-plot(apl, aes(x=id, y=get_expr(enquo(cnames)))) + geom_boxplot() + facet_wrap(. ~ name, scales="free") + scale_y_continuous(trans="log10")
+plot(apl, aes(x=id, y=get_expr(enquo(cnames))), which="boxplot") + facet_wrap(. ~ name, scales="free") + scale_y_continuous(trans="log10")
 ```
 
 ## Plot number of indels

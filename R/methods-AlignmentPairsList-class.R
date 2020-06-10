@@ -25,7 +25,10 @@ setMethod("AlignmentPairsList", "list",
 ##'
 setMethod("as.data.frame", signature = "AlignmentPairsList",
           function(x, ..., .id="id") {
-    dplyr::bind_rows(lapply(x, as.data.frame, ...), .id = .id)
+    data <- dplyr::bind_rows(lapply(x, as.data.frame, ...), .id = .id)
+    if (!is.null(names(x)))
+        data[[.id]] <- factor(data[[.id]], levels=names(x))
+    data
 })
 
 
