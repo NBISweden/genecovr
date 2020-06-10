@@ -146,7 +146,7 @@ theme_set(gray)
 ##--------------------
 message("Making basic mismatch plots...")
 outfile <- file.path(outdir, "width_violin.pdf")
-p <- plot(apl, aes(x=id, y=matches/query.width), which="violin") +
+p <- plot(apl, aes(x=id, y=matches/query.width, fill=id), which="violin") +
     scale_fill_viridis_d() +
     theme(legend.justification = c(1, 0), legend.position = c(1, 0)) +
     ylim(0.7, 1)
