@@ -2,7 +2,6 @@
 ##'
 ##' @description Methods for dealing with sequence data
 ##'
-##' @details
 ##'
 ##' @name sequence data methods
 ##'

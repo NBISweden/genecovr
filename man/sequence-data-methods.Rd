@@ -6,6 +6,3 @@
 \description{
 Methods for dealing with sequence data
 }
-\details{
-
-}

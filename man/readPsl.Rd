@@ -30,7 +30,9 @@ AlignmentPairs object
 Read psl output
 }
 \details{
-
+Parse Pattern Space Layout (psl) file; see
+http://genome.ucsc.edu/FAQ/FAQformat.html for more information
+on the psl file format
 }
 \examples{
 fn <- system.file("extdata", "transcripts2polished.psl",

@@ -3,7 +3,9 @@
 ##' @description
 ##' Methods for dealing with psl data
 ##'
-##' @details
+##' @details Methods for dealing with the Pattern Space Layout (psl)
+##'     file format. See http://genome.ucsc.edu/FAQ/FAQformat.html for
+##'     more information.
 ##'
 ##' @name psl methods
 ##'
@@ -56,7 +58,9 @@ NULL
 ##'
 ##' @description Read psl output
 ##'
-##' @details
+##' @details Parse Pattern Space Layout (psl) file; see
+##'     http://genome.ucsc.edu/FAQ/FAQformat.html for more information
+##'     on the psl file format
 ##'
 ##' @param filename input filename
 ##' @param seqinfo.query Seqinfo object for query (transcripts)

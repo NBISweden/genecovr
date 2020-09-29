@@ -7,5 +7,7 @@
 Methods for dealing with psl data
 }
 \details{
-
+Methods for dealing with the Pattern Space Layout (psl)
+file format. See http://genome.ucsc.edu/FAQ/FAQformat.html for
+more information.
 }
