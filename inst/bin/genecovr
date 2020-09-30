@@ -139,42 +139,48 @@ suppressPackageStartupMessages(library(viridis))
 gray <- theme_gray(base_size=18) %+replace% theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
 theme_set(gray)
 
+## Add wrapper for saving plots
+save_plot <- function(p, prefix, width=fig.width, height=fig.height) {
+    ggsave(paste0(prefix, ".pdf"), plot=p, width=width, height=height)
+    ggsave(paste0(prefix, ".png"), plot=p, width=width, height=height)
+}
+
 
 
 ##--------------------
 ## Plot alignment matches to width
 ##--------------------
 message("Making basic mismatch plots...")
-outfile <- file.path(outdir, "width_violin.pdf")
+outfile <- file.path(outdir, "width_violin")
 p <- plot(apl, aes(x=id, y=matches/query.width, fill=id), which="violin") +
     scale_fill_viridis_d() +
     theme(legend.justification = c(1, 0), legend.position = c(1, 0)) +
     ylim(0.7, 1)
-ggsave(outfile, plot=p, width=fig.width, height=fig.height)
+save_plot(p, outfile)
 
 ##--------------------
 ## Plot match indel
 ##--------------------
 suppressPackageStartupMessages(library(rlang))
-outfile <- file.path(outdir, "match_indel.violin.pdf")
+outfile <- file.path(outdir, "match_indel.violin")
 cnames <- c("misMatches", "query.NumInsert", "query.BaseInsert")
 p <- plot(apl, aes(x=id, y=get_expr(enquo(cnames))), which="violin") +
     facet_wrap(. ~ name, scales="free")
-ggsave(outfile, plot=p, width=fig.width, height=fig.height)
+save_plot(p, outfile)
 
-outfile <- file.path(outdir, "match_indel.boxplot.pdf")
+outfile <- file.path(outdir, "match_indel.boxplot")
 p <- plot(apl, aes(x=id, y=get_expr(enquo(cnames))), which="boxplot") +
     facet_wrap(. ~ name, scales="free")
-ggsave(outfile, plot=p, width=fig.width, height=fig.height)
+save_plot(p, outfile)
 
-outfile <- file.path(outdir, "match_indel.boxplot.log10.pdf")
+outfile <- file.path(outdir, "match_indel.boxplot.log10")
 p <- plot(apl, aes(x=id, y=get_expr(enquo(cnames))), which="boxplot") +
     facet_wrap(. ~ name, scales="free") + scale_y_continuous(trans="log10")
-ggsave(outfile, plot=p, width=fig.width, height=fig.height)
+save_plot(p, outfile)
 
 
 ## FIXME: number of levels should be parametrized via option
-outfile <- file.path(outdir, "qnuminsert.pdf")
+outfile <- file.path(outdir, "qnuminsert")
 x <- as.data.frame(apl)
 x$cuts <- cut(x$query.NumInsert, c(0:4, Inf), include.lowest=TRUE)
 levels(x$cuts) <- c(0:3, ">3")
