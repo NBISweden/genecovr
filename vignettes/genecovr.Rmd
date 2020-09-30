@@ -204,7 +204,7 @@ data <- dplyr::bind_rows(lapply(
 and plot the results
 
 ```{r gbc-plot-ncontigs-per-transcript}
-ggplot(data=data, aes(x=factor(min.coverage), y=Freq, fill=n.subjects)) + geom_bar(stat='identity', position=position_stack()) + scale_fill_viridis_d(begin=1, end=0) + facet_wrap(~ dataset, nrow=1, labeller=label_both)
+ggplot(data=data, aes(x=factor(min.coverage), y=Freq, fill=n.subjects)) + geom_bar(stat='identity', position=position_stack()) + scale_fill_viridis_d(begin=1, end=0) + facet_wrap(. ~ dataset, nrow=1, labeller=label_both)
 ```
 
 ## Duplicated versus split transcripts
@@ -215,20 +215,28 @@ subjects. One way to investigate whether or not trancripts are split
 or duplicated is to plot the depth of coverage divided by the breadth
 of coverage against normalized coverage.
 
+First combine the data:
+
+```{r gbc-depth-by-breadth-data}
+data <- dplyr::bind_rows(lapply(
+                   lapply(apl, geneBodyCoverage),
+                   data.frame),
+                   .id="dataset")
+```
+
 ```{r gbc-plot-depth-by-breadth-normalized}
-ggplot(data=as.data.frame(gbc$pol), aes(x=coverage, y=depthOfCoverage / breadthOfCoverage, color=factor(n.subjects))) + geom_point(size=1.5) + scale_color_viridis_d(alpha=.8) + xlim(0, 1) + ylim(0, 5)
+ggplot(data=data, aes(x=coverage, y=depthOfCoverage / breadthOfCoverage, color=factor(n.subjects))) + geom_point(size=1.5) + scale_color_viridis_d(alpha=.8) + xlim(0, 1) + ylim(0, 5) + facet_wrap(. ~ dataset)
 ```
 
 Alternatively we can make a jitter plot of the depthOfCoverage by
 breadthOfCoverage against number of subjects.
 
 ```{r gbc-plot-depth-by-breadth-by-contigs}
-ggplot(data=subset(as.data.frame(gbc$pol), n.subjects>1), aes(x=factor(n.subjects), y=depthOfCoverage / breadthOfCoverage)) + geom_jitter(size=1.5)
+ggplot(data=subset(data, n.subjects>1), aes(x=factor(dataset), y=depthOfCoverage / breadthOfCoverage)) + geom_jitter(size=1.5) + facet_wrap(. ~ n.subjects)
 ```
 
 Finally, a similar picture is obtained via a histogram plot.
 
 ```{r gbc-plot-depth-by-breadth-by-contigs-hist}
-ggplot(data=subset(as.data.frame(gbc$pol), n.subjects>1), aes(depthOfCoverage/breadthOfCoverage)) + geom_histogram() + facet_wrap(. ~ n.subjects, scale="free")
+ggplot(data=subset(data, n.subjects>1), aes(depthOfCoverage/breadthOfCoverage)) + geom_histogram() + facet_grid(vars(dataset), scale="free_y")
 ```
-
