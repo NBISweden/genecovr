@@ -188,7 +188,7 @@ x$cuts <- factor(x$cuts, levels=c(">3", 3:0))
 p <- ggplot(x, aes(id)) +
     geom_bar(aes(fill=cuts)) +
     scale_fill_viridis_d(name="qNumInsert", begin=1, end=0)
-ggsave(outfile, plot=p, width=fig.width, height=fig.height)
+save_plot(p, outfile)
 
 
 ##--------------------
@@ -220,15 +220,15 @@ hmax <- ceiling(h/100) * 100
 
 for (mm in as.numeric(unique(min.match))) {
     message("Plotting coverage for minimum match ", mm)
-    outfile <- file.path(outdir, paste0("gene_body_coverage.minmatch.", mm, ".pdf"))
+    outfile <- file.path(outdir, paste0("gene_body_coverage.minmatch.", mm))
     p <- ggplot(subset(data, min.match==mm), aes(x=min.coverage, y=count, group=dataset, color=dataset)) +
         geom_abline(slope=0, intercept=h) +
         geom_point(aes(shape=dataset, color=dataset), size=2) + geom_line() +
         scale_color_viridis_d() + scale_y_continuous(breaks=c(pretty(data$count)), limits=c(0, hmax))
-    ggsave(outfile, plot=p, width=fig.width, height=fig.height)
+    save_plot(p, outfile)
 }
 
-outfile <- file.path(outdir, "gene_body_coverage.csv.gz")
+outfile <- file.path(outdir, "gbc_summary.csv.gz")
 message("saving ", outfile)
 write.csv(data, gzfile(outfile), row.names=FALSE)
 
@@ -248,9 +248,47 @@ p <- ggplot(data=data, aes(x=factor(min.coverage), y=Freq, fill=n.subjects)) +
     geom_bar(stat='identity', position=position_stack()) +
     scale_fill_viridis_d(begin=1, end=0) + facet_wrap(~ dataset, nrow=1, labeller=label_both)
 
-outfile <- file.path(outdir, paste0("ncontigs_per_transcripts.bar.mm", mm, ".pdf"))
-ggsave(outfile, plot=p, width=fig.width, height=fig.height)
+outfile <- file.path(outdir, paste0("ncontigs_per_transcripts.bar.mm", mm))
+save_plot(p, outfile)
 
 outfile <- file.path(outdir, "ncontigs_per_transcripts.csv.gz")
+message("saving ", outfile)
+write.csv(data, gzfile(outfile), row.names=FALSE)
+
+
+##------------------------------
+## Plot depth and breadth of coverage
+## NB: similar to above, only do for one mismatch cutoff
+##------------------------------
+mm <- 0.75
+message("plot breadth and depth of coverage; mis.match = ", mm)
+data <- dplyr::bind_rows(lapply(
+                   lapply(apl, geneBodyCoverage),
+                   data.frame),
+                   .id="dataset")
+
+p <- ggplot(data=data, aes(x=coverage, y=depthOfCoverage / breadthOfCoverage,
+                           color=factor(n.subjects))) + geom_point(size=1.5) +
+    scale_color_viridis_d(alpha=.8) + xlim(0, 1) + ylim(0, 5) +
+    facet_wrap(. ~ dataset)
+outfile <- file.path(outdir, paste0("depth_breadth_coverage.mm", mm))
+save_plot(p, outfile)
+
+
+p <- ggplot(data=subset(data, n.subjects>1),
+            aes(x=factor(dataset), y=depthOfCoverage / breadthOfCoverage)) +
+    geom_jitter(size=1.5) + facet_wrap(. ~ n.subjects)
+outfile <- file.path(outdir, paste0("depth_breadth_dataset_jitter.mm", mm))
+save_plot(p, outfile)
+
+
+p <- ggplot(data=subset(data, n.subjects>1),
+            aes(depthOfCoverage/breadthOfCoverage)) +
+    geom_histogram() + facet_grid(vars(dataset), scale="free_y")
+outfile <- file.path(outdir, paste0("depth_breadth_dataset_hist.mm", mm))
+save_plot(p, outfile)
+
+
+outfile <- file.path(outdir, "gene_body_coverage.csv.gz")
 message("saving ", outfile)
 write.csv(data, gzfile(outfile), row.names=FALSE)
