@@ -16,13 +16,22 @@ than min.match}
 reduced and filtered DataFrame object where each row is a
 transcript. seqnames and seqlengths columns are collected from
 the corresponding seqinfo object. breadthOfCoverage is the
-total width of all reduced regions of the transcript; dividing
-this number by the total transcript length gives the coverage
-fraction. The revmap lists the numerical ids of the matching
-contigs which can be retrieved from the AlignmentPairs
-subject. The hitCoverage lists the width of each reduced hit,
-and hitStart and hitEnd provide the transcript coordinates of
-these hits.
+total width of all reduced regions of the transcript and
+corresponds to how much of a transcript is covered. Dividing
+breadthOfCoverage by the total transcript length gives the
+coverage fraction. depthOfCoverage sums all ranges and is an
+estimate of how many times each range is present. Dividing the
+depthOfCoverage by breadthOfCoverage indicates the
+multiplicity of the query. For queries that map multiple
+subjects, a value close to 1 indicates the query has been
+split in several subjects, whereas a higher value indicates
+sequence duplication at the subject level.\preformatted{The revmap column maps the output ranges to the input ranges
+as lists of numerical ids. These ids can be used to retrieve
+the corresponding AlignmentPairs ranges providing a link to
+the subjects. The hitCoverage lists the width of each reduced
+hit, and hitStart and hitEnd provide the transcript
+coordinates of these hits.
+}
 }
 \description{
 Calculate geneBodyCoverage of query sequences

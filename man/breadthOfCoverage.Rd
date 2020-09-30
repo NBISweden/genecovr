@@ -9,6 +9,9 @@ breadthOfCoverage(x)
 \arguments{
 \item{x}{GRangesList object}
 }
+\value{
+integer representing the sum of range widths
+}
 \description{
 Calculate breadth of coverage by sequence id
 }

@@ -2,3 +2,5 @@
 ^\.github$
 ^README\.Rmd$
 ^scripts$
+^doc$
+^Meta$
