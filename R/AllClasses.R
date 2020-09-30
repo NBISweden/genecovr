@@ -33,8 +33,6 @@ setClass("AlignmentPairs",
 
 
 ##' @importFrom methods validObject callNextMethod
-##' @param .Object
-##' @param ...
 setMethod("initialize", "AlignmentPairs", function(.Object, ...) {
     .Object <- callNextMethod()
     validObject(.Object)

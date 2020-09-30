@@ -168,7 +168,7 @@ setMethod("repmatches", "AlignmentPairs",
 ##' )
 ##' sbj <- GenomicRanges::GRanges(ranges=ranges, seqnames=c("c1", "c2", "c1"))
 ##' x <- AlignmentPairs(query=qry, subject=sbj, matches=c(300, 290, 280))
-##' gr <- reduceHitCoverage(x, 0.1)
+##' \dontrun{gr <- reduceHitCoverage(x, 0.1)}
 ##'
 reduceHitCoverage <- function(x, min.match=0.9) {
     .Deprecated()

@@ -39,5 +39,5 @@ object by aligning the vectors \code{query} and \code{subject}.
 }
 
 \seealso{
-\link[S4Vectors]{Pairs-class}
+\code{\link[S4Vectors]{Pairs-class}}
 }
