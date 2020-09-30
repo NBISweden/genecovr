@@ -12,12 +12,6 @@ test_that("depth- and breadthOfCoverage calculate coverages by sequence identifi
     expect_equal(as.vector(breadthOfCoverage(grl)), c(98, 98, 200))
 })
 
-test_that("reduceHitCoverage redoces hit coverage where applicable", {
-    expect_equal(width(reduceHitCoverage(ap1)), c(95, 98))
-    expect_equal(width(reduceHitCoverage(ap1, 0.1)), c(98, 98))
-    expect_equal(length(reduceHitCoverage(ap1, 0.99)), 0)
-})
-
 test_that("geneBodyCoverage transcripts are equal to query seqinfo", {
     expect_equal(geneBodyCoverage(ap1)$seqnames, seqnames(seqinfo(query(ap1))))
 })
