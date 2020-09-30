@@ -142,8 +142,8 @@ setMethod("repmatches", "AlignmentPairs",
 ##' @rdname reduceHitCoverage
 ##' @export
 ##'
-##' @importFrom GenomicRanges reduce
-##' @importFrom IRanges CharacterList
+##' @importFrom IRanges CharacterList reduce width
+##' @importFrom S4Vectors subset
 ##'
 ##' @param x AlignmentPairs object
 ##' @param min.match filter out hits with fraction of matching bases
@@ -171,16 +171,15 @@ setMethod("repmatches", "AlignmentPairs",
 ##' gr <- reduceHitCoverage(x, 0.1)
 ##'
 reduceHitCoverage <- function(x, min.match=0.9) {
+    .Deprecated()
     stopifnot(inherits(x, "AlignmentPairs"))
     message("Reducing hits for ", summary(x), ", min.match ", min.match)
-    y <- x[matches(x) / width(query(x)) > min.match];
-    q <- GenomicRanges::reduce(query(y), ignore.strand = TRUE,
-                               with.revmap = TRUE)
+    y <- subset(x, matches(x) / width(query(x)) > min.match)
+    q <- reduce(query(y), ignore.strand = TRUE,
+                with.revmap = TRUE)
     q
 }
 
-
-## TODO: Make generics for GRangesList?
 ##' breadthOfCoverage
 ##'
 ##' @description Calculate breadth of coverage by sequence id
@@ -191,30 +190,35 @@ reduceHitCoverage <- function(x, min.match=0.9) {
 ##' @export
 ##'
 ##' @importFrom GenomicRanges GRangesList
+##' @importFrom IRanges width reduce
+##'
+##' @return integer representing the sum of range widths
 ##'
 ## see https://stackoverflow.com/questions/39401376/aggregate-bins-in-large-granges-efficiently
 breadthOfCoverage <- function(x) {
     stopifnot(inherits(x, "GRangesList"))
-    sum(width(x))
+    sum(width(reduce(x)))
 }
 
-##' revmapList
+##' depthOfCoverage
 ##'
-##' @description Get unique list of revmap entries
+##' @description Calculate depth of coverage by sequence id
 ##'
-##' @param x GRanges object
+##' @param x GRangesList object
 ##'
-##' @rdname revmapList
+##' @rdname depthOfCoverage
 ##' @export
 ##'
-##' @importFrom GenomicRanges GRanges
+##' @importFrom GenomicRanges GRangesList
+##' @importFrom IRanges width
 ##'
+##' @return integer representing the sum of range widths
 ##'
-revmapList <- function(x) {
-    stopifnot(inherits(x, "GRanges"))
-    unique(unlist(x$revmap))
+## see https://stackoverflow.com/questions/39401376/aggregate-bins-in-large-granges-efficiently
+depthOfCoverage <- function(x) {
+    stopifnot(inherits(x, "GRangesList"))
+    sum(width(x))
 }
-
 
 
 ##' geneBodyCoverage
@@ -223,6 +227,29 @@ revmapList <- function(x) {
 ##'
 ##' @details Given an AlignmentPairs object, calculate gene body
 ##'     coverages of query sequences.
+##'     regions. For instance, if one hit spans coordinates 100-400
+##'     and another 200-500, we merge to 100-500. The function
+##'     calculates how many overlaps that are merged, the rationale
+##'     being that if there are >1 overlaps for a seqname, the
+##'     sequence is associated with multiple distinct regions in the
+##'     subject sequence. Thus, the unit of interest here is the
+##'     query, and the function seeks to identify reduced disjoint
+##'     regions of a query sequence that map to a subject.
+##'
+##'     The function returns a GRanges object with reduced regions,
+##'     i.e. overlaps are merged. Information about matches and
+##'     mismatches is currently dropped as it usually is not possible
+##'     to infer where mismatches occur. Instead, the data column
+##'     `coverage` simply holds the ratio of the width of the region
+##'     to the transcript length. Summing up coverages from disjoint
+##'     regions then gives total coverage of the transcript.
+##'
+##'     The cutoff is used to filter regions based on the ratio of
+##'     matches to the width of the region.
+##'
+##'     Since the association between query and subject regions is
+##'     removed, the return value is a GRanges object consisting of
+##'     the reduced query ranges with a revmap and coverage attribute.
 ##'
 ##'
 ##' @rdname geneBodyCoverage
@@ -236,33 +263,48 @@ revmapList <- function(x) {
 ##' @importFrom S4Vectors DataFrame
 ##'
 ##' @return reduced and filtered DataFrame object where each row is a
-##'     transcript. seqnames and seqlengths columns are collected from
-##'     the corresponding seqinfo object. breadthOfCoverage is the
-##'     total width of all reduced regions of the transcript; dividing
-##'     this number by the total transcript length gives the coverage
-##'     fraction. The revmap lists the numerical ids of the matching
-##'     contigs which can be retrieved from the AlignmentPairs
-##'     subject. The hitCoverage lists the width of each reduced hit,
-##'     and hitStart and hitEnd provide the transcript coordinates of
-##'     these hits.
+##'     transcript. See @details for information on seqnames and
+##'     seqlengths columns are collected from the corresponding
+##'     seqinfo object. breadthOfCoverage is the total width of all
+##'     reduced regions of the transcript and corresponds to how much
+##'     of a transcript is covered. Dividing breadthOfCoverage by the
+##'     total transcript length gives the coverage fraction.
+##'     depthOfCoverage sums all ranges and is an estimate of how many
+##'     times each range is present. Dividing the depthOfCoverage by
+##'     breadthOfCoverage indicates the multiplicity of the query. For
+##'     queries that map multiple subjects, a value close to 1
+##'     indicates the query has been split in several subjects,
+##'     whereas a higher value indicates sequence duplication at the
+##'     subject level.
+##'
+##'     The revmap column maps the output ranges to the input ranges
+##'     as lists of numerical ids. These ids can be used to retrieve
+##'     the corresponding AlignmentPairs ranges providing a link to
+##'     the subjects. The hitCoverage lists the width of each reduced
+##'     hit, and hitStart and hitEnd provide the transcript
+##'     coordinates of these hits.
 ##'
 geneBodyCoverage <- function(x, min.match=0.9) {
     stopifnot(inherits(x, "AlignmentPairs"))
     message("Calculating gene body coverage for ",
             summary(x), ", min.match ", min.match)
-    y <- reduceHitCoverage(x, min.match)
-    grl <- split(y, seqnames(y))
+    x <- subset(x, matches(x) / width(query(x)) > min.match)
+    y <- reduce(query(x), with.revmap=TRUE, ignore.strand=TRUE)
+    grl <- split(query(x), seqnames(query(x)))
+    revmapToList <- function(x) unique(unlist(x$revmap))
     data <- DataFrame(
-        seqnames = seqnames(seqinfo(y)),
-        seqlengths = seqlengths(seqinfo(y)),
+        seqnames = seqnames(seqinfo(query(x))),
+        seqlengths = seqlengths(seqinfo(query(x))),
         breadthOfCoverage = breadthOfCoverage(grl),
-        revmap = IRanges::IntegerList(lapply(grl, revmapList)),
-        hitCoverage = width(grl),
+        depthOfCoverage = depthOfCoverage(grl),
+        revmap = IRanges::IntegerList(lapply(split(y, seqnames(y)), revmapToList)),
+        hitCoverage = width(reduce(grl)),
         hitStart = start(grl),
         hitEnd = end(grl)
     )
     data$coverage <- data$breadthOfCoverage / data$seqlengths
     data$revmap.count <- unlist(lapply(data$revmap, length))
+    data$n.subjects <- unlist(lapply(data$revmap, function(j) {length(seqnames(sbjct(x[j])))}))
     data
 }
 
