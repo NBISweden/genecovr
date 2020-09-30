@@ -29,7 +29,7 @@ Constructor for AlignmentPairs
 }
 \details{
 The AlignmentPairs class extends the
-\link[S4Vectors]{Pairs-class}
+\code{\link[S4Vectors]{Pairs-class}}
 }
 \section{Constructor}{
 

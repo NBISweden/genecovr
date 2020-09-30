@@ -18,14 +18,14 @@ setClassUnion("integerOrMissing", c("integer", "missing", "logical"))
 ##'
 ##'
 ##' @details The AlignmentPairs class extends the
-##'     \link[S4Vectors]{Pairs-class}
+##'     \code{\link[S4Vectors]{Pairs-class}}
 ##'
 ##' @export
 ##' @rdname AlignmentPairs-class
 ##'
 ##' @import S4Vectors
 ##'
-##' @seealso \link[S4Vectors]{Pairs-class}
+##' @seealso \code{\link[S4Vectors]{Pairs-class}}
 ##'
 setClass("AlignmentPairs",
          contains = c("Pairs"),
@@ -33,6 +33,8 @@ setClass("AlignmentPairs",
 
 
 ##' @importFrom methods validObject callNextMethod
+##' @param .Object
+##' @param ...
 setMethod("initialize", "AlignmentPairs", function(.Object, ...) {
     .Object <- callNextMethod()
     validObject(.Object)
