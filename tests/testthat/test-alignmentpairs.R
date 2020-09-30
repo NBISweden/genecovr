@@ -6,17 +6,10 @@ test_that("matches returns correct matches", {
     expect_equal(matches(ap1), c(90, 90, 4))
 })
 
-## TODO: add function for APL
-test_that("breadthOfCoverage calculates breadth of coverage by sequence identifier", {
-    grl <- GRangesList(lapply(apl, query))
-    ## NB: Will  fail when we add reduce option
-    expect_equal(breadthOfCoverage(grl), c(202, 191, 102))
-})
-
-test_that("revmapList returns unique list of revmap entries", {
-    y <- reduceHitCoverage(ap1, 0.1)
-    grl <- split(y, seqnames(y))
-    expect_equal(as.vector(unlist(lapply(grl, revmapList))), c(1, 3, 2))
+test_that("depth- and breadthOfCoverage calculate coverages by sequence identifier", {
+    grl <- split(query(ap4), seqnames(query(ap4)))
+    expect_equal(as.vector(depthOfCoverage(grl)), c(104, 98, 377))
+    expect_equal(as.vector(breadthOfCoverage(grl)), c(98, 98, 200))
 })
 
 test_that("reduceHitCoverage redoces hit coverage where applicable", {
