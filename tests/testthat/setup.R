@@ -124,4 +124,4 @@ psl_fn <- list(
 )
 
 
-withr::defer(rm(c(assembly_fai_fn, transcripts_fai_fn, psl_fn)))
+withr::defer(rm(assembly_fai_fn, transcripts_fai_fn, psl_fn))
