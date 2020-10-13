@@ -40,7 +40,7 @@ test_that("countSubjectsByCoverage generates correct table", {
     expect_equal(subset(y, n.subjects == 1)$Freq, c(2, 2, 2))
     expect_equal(subset(y, n.subjects == "filtered")$Freq, c(0, 0, 0))
     expect_equal(subset(y, n.subjects == 2)$Freq, c(1, 1, 1))
-    expect_equal(subset(y, n.subjects == 3)$Freq, integer(0))
+    expect_equal(subset(y, n.subjects == 3)$Freq, c(0, 0, 0))
     y <- countSubjectsByCoverage(ap4, min.coverage=c(0.9, 0.95, 1.0))
     expect_equal(subset(y, n.subjects == "filtered")$Freq, c(3, 1))
 })

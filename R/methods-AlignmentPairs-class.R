@@ -366,8 +366,8 @@ countSubjectsByCoverage <- function(x, min.coverage=seq(0.25, 1, 0.25),
     z.df <- DataFrame(z)
     colnames(z.df) <- c("n.subjects", "min.coverage", "Freq")
     z.df$min.match <- min.match
-    if (nmax < max(as.numeric(z.df$n.subjects)))
-        nmax <- max(as.numeric(z.df$n.subjects))
+    if (nmax < max(as.numeric(levels(z.df$n.subjects))))
+        nmax <- max(as.numeric(levels(z.df$n.subjects)))
     z.df$n.subjects <- factor(z.df$n.subjects, levels = c(0, nmax:1))
     levels(z.df$n.subjects)[1] <- "filtered"
     levels(z.df$min.coverage) <- rev(min.coverage[1:(length(min.coverage) - 1)])
