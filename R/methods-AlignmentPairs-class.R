@@ -359,7 +359,7 @@ countSubjectsByCoverage <- function(x, min.coverage=seq(0.25, 1, 0.25),
     data <- geneBodyCoverage(x, min.match = min.match)
     tab <- table(factor(
         data$n.subjects,
-        levels = sort(unique(c(0, data$n.subjects)))),
+        levels = sort(unique(c(0, 1:max(data$n.subjects, nmax))))),
         cut(data$coverage, min.coverage))[, (length(min.coverage) - 1):1]
     z <- t(as.table(apply(tab, 1, cumsum)))
     z[1, ] <- nrow(data) - apply(z[2:nrow(z), ], 2, sum)
