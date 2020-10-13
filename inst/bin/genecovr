@@ -114,7 +114,8 @@ suppressPackageStartupMessages(library(GenomeInfoDb))
     if (grepl("(.fai)$", fn)) {
         readFastaIndex(fn)
     } else {
-        seqinfo(readDNAStringSet(fn))
+        ss <- readDNAStringSet(fn)
+        Seqinfo(names(ss), width(ss))
     }
 }
 transcripts.sinfo <- lapply(transcripts.fn, .getSeqinfo)
