@@ -115,7 +115,7 @@ suppressPackageStartupMessages(library(GenomeInfoDb))
         readFastaIndex(fn)
     } else {
         ss <- readDNAStringSet(fn)
-        names(ss) <- gsub("([^ ]+) .+", "\\1", names(ss))
+        names(ss) <- gsub("([^ ]+).*", "\\1", names(ss))
         Seqinfo(names(ss), width(ss))
     }
 }

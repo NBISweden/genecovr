@@ -1,3 +1,7 @@
+# Release 0.0.0.9008
+
+- Remove characters trailing first space in fasta headers
+
 # Release 0.0.0.9007
 
 - Fix conversion of DNAStringSet to Seqinfo
