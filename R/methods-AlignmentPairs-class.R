@@ -305,6 +305,7 @@ geneBodyCoverage <- function(x, min.match=0.9) {
     data$coverage <- data$breadthOfCoverage / data$seqlengths
     data$revmap.count <- unlist(lapply(data$revmap, length))
     data$n.subjects <- unlist(lapply(data$revmap, function(j) {length(seqnames(sbjct(x[j])))}))
+    metadata(data) <- list(analysis="geneBodyCoverage", min.match=min.match)
     data
 }
 
@@ -314,23 +315,27 @@ geneBodyCoverage <- function(x, min.match=0.9) {
 ##' @rdname summarizeGeneBodyCoverage
 ##' @export
 ##'
-##' @importFrom S4Vectors DataFrame
+##' @importFrom S4Vectors DataFrame metadata
 ##'
-##' @param x AlignmentPairs object
+##' @param x AlignmentPairs or DataFrame object
 ##' @param min.coverage coverage cutoffs to apply to transcripts
 ##' @param min.match filter out hits with fraction matching bases less
 ##'     than min.match
 ##'
 summarizeGeneBodyCoverage <- function(x, min.coverage=seq(0, 1, 0.05),
                                       min.match=0.9) {
-    stopifnot(inherits(x, "AlignmentPairs"))
+    stopifnot(inherits(x, "AlignmentPairs") | inherits(x, "DataFrame"))
     message("Summarizing gene body coverage for ",
             summary(x), ", ", length(min.coverage), " coverage cutoffs")
-    data <- geneBodyCoverage(x, min.match)
+    if (inherits(x, "DataFrame")) {
+        stopifnot(metadata(x)$analysis == "geneBodyCoverage")
+        min.match <- metadata(x)$min.match
+    } else
+        x <- geneBodyCoverage(x, min.match)
     DataFrame(
         count = rev(cumsum(rev(apply(
-            table(data$coverage, cut(data$coverage, min.coverage)), 2, sum)))),
-        total = nrow(data),
+            table(x$coverage, cut(x$coverage, min.coverage)), 2, sum)))),
+        total = nrow(x),
         min.coverage = min.coverage[2:length(min.coverage)],
         min.match = min.match
     )
@@ -343,9 +348,9 @@ summarizeGeneBodyCoverage <- function(x, min.coverage=seq(0, 1, 0.05),
 ##' @rdname countSubjectsByCoverage
 ##' @export
 ##'
-##' @importFrom S4Vectors DataFrame
+##' @importFrom S4Vectors DataFrame metadata
 ##'
-##' @param x AlignmentPairs object
+##' @param x AlignmentPairs or DataFrame object
 ##' @param min.coverage coverage cutoffs to apply to transcripts
 ##' @param min.match filter out hits with fraction matching bases less
 ##'     than min.match
@@ -353,16 +358,20 @@ summarizeGeneBodyCoverage <- function(x, min.coverage=seq(0, 1, 0.05),
 ##'
 countSubjectsByCoverage <- function(x, min.coverage=seq(0.25, 1, 0.25),
                                     min.match=0.9, nmax=5) {
-    stopifnot(inherits(x, "AlignmentPairs"))
+    stopifnot(inherits(x, "AlignmentPairs") | inherits(x, "DataFrame"))
     message("Counting number of subjects by coverage for ",
             summary(x), ", ", length(min.coverage), " coverage cutoffs")
-    data <- geneBodyCoverage(x, min.match = min.match)
+    if (inherits(x, "DataFrame")) {
+        stopifnot(metadata(x)$analysis == "geneBodyCoverage")
+        min.match <- metadata(x)$min.match
+    } else
+        x <- geneBodyCoverage(x, min.match)
     tab <- table(factor(
-        data$n.subjects,
-        levels = sort(unique(c(0, 1:max(data$n.subjects, nmax))))),
-        cut(data$coverage, min.coverage))[, (length(min.coverage) - 1):1]
+        x$n.subjects,
+        levels = sort(unique(c(0, 1:max(x$n.subjects, nmax))))),
+        cut(x$coverage, min.coverage))[, (length(min.coverage) - 1):1]
     z <- t(as.table(apply(tab, 1, cumsum)))
-    z[1, ] <- nrow(data) - apply(z[2:nrow(z), ], 2, sum)
+    z[1, ] <- nrow(x) - apply(z[2:nrow(z), ], 2, sum)
     z.df <- DataFrame(z)
     colnames(z.df) <- c("n.subjects", "min.coverage", "Freq")
     z.df$min.match <- min.match
