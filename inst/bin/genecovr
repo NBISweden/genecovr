@@ -292,7 +292,7 @@ save_plot(p, outfile)
 
 
 p <- ggplot(data=subset(data, n.subjects>1),
-            aes(x=factor(datast), y=seqlengths)) +
+            aes(x=factor(dataset), y=seqlengths)) +
     geom_boxplot() + facet_grid(. ~ n.subjects)
 outfile <- file.path(outdir, paste0("depth_breadth_seqlengths.mm", mm))
 save_plot(p, outfile)
