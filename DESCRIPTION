@@ -1,6 +1,6 @@
 Package: genecovr
 Title: Gene body coverage analysis to evaluate genome assemblies
-Version: 0.0.0.9008
+Version: 0.0.0.9009
 Authors@R: 
     person(given = "Per",
            family = "Unneberg",

@@ -1,3 +1,14 @@
+# Release 0.0.0.9009
+
+- add plot of transcript length distributions conditioned on number of
+  mapped contigs
+- fix y axis for histogram plots
+- increase point size of some plots
+- summarizeGeneBodyCoverage and countSubjectsByCoverage now accept
+  DataFrame inputs, obviating the need to rerun geneBodyCoverage
+  multiple times in genecovr script
+
+
 # Release 0.0.0.9008
 
 - Remove characters trailing first space in fasta headers
