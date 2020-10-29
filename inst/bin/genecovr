@@ -280,14 +280,21 @@ save_plot(p, outfile)
 p <- ggplot(data=subset(data, n.subjects>1),
             aes(x=factor(dataset), y=depthOfCoverage / breadthOfCoverage)) +
     geom_jitter(size=1.5) + facet_wrap(. ~ n.subjects)
-outfile <- file.path(outdir, paste0("depth_breadth_dataset_jitter.mm", mm))
+outfile <- file.path(outdir, paste0("depth_breadth_jitter.mm", mm))
 save_plot(p, outfile)
 
 
 p <- ggplot(data=subset(data, n.subjects>1),
             aes(depthOfCoverage/breadthOfCoverage)) +
-    geom_histogram() + facet_grid(vars(dataset), scale="free_y")
-outfile <- file.path(outdir, paste0("depth_breadth_dataset_hist.mm", mm))
+    geom_histogram() + facet_grid(vars(dataset))
+outfile <- file.path(outdir, paste0("depth_breadth_hist.mm", mm))
+save_plot(p, outfile)
+
+
+p <- ggplot(data=subset(data, n.subjects>1),
+            aes(x=factor(datast), y=seqlengths)) +
+    geom_boxplot() + facet_grid(. ~ n.subjects)
+outfile <- file.path(outdir, paste0("depth_breadth_seqlengths.mm", mm))
 save_plot(p, outfile)
 
 
