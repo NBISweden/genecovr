@@ -7,7 +7,7 @@
 summarizeGeneBodyCoverage(x, min.coverage = seq(0, 1, 0.05), min.match = 0.9)
 }
 \arguments{
-\item{x}{AlignmentPairs object}
+\item{x}{AlignmentPairs or DataFrame object}
 
 \item{min.coverage}{coverage cutoffs to apply to transcripts}
 

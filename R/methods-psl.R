@@ -89,7 +89,7 @@ readPsl <- function(filename, seqinfo.query=NULL, seqinfo.sbjct=NULL,
     start_time <- Sys.time()
     con <- file(filename, "r")
     on.exit(close(con))
-    data <- read.table(con, header = FALSE)
+    data <- unique(read.table(con, header = FALSE))
     colnames(data) <- .header
     ## Create query and subject
     if (is.null(seqinfo.query))

@@ -1,3 +1,7 @@
+# Release 0.0.0.9010
+
+- remove duplicate entries in psl input
+
 # Release 0.0.0.9009
 
 - add plot of transcript length distributions conditioned on number of

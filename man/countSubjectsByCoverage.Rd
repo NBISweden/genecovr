@@ -12,7 +12,7 @@ countSubjectsByCoverage(
 )
 }
 \arguments{
-\item{x}{AlignmentPairs object}
+\item{x}{AlignmentPairs or DataFrame object}
 
 \item{min.coverage}{coverage cutoffs to apply to transcripts}
 
