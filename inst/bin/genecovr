@@ -87,6 +87,7 @@ indata <- read.csv(csvfile, header=FALSE,
                    colClasses=c("factor", "character", "character", "character"))
 colnames(indata) <- c("dataset", "psl", "assembly", "trxset")
 
+indata$dataset <- factor(indata$dataset, levels=as.character(indata$dataset))
 psl.fn <- indata$psl
 names(psl.fn) <- indata$dataset
 assembly.fn <- indata$assembly
