@@ -218,6 +218,7 @@ gbc.summary <- bplapply(gbc, function(x) {
 
 suppressPackageStartupMessages(library(dplyr))
 data <- dplyr::bind_rows(lapply(gbc.summary, data.frame), .id="dataset")
+data$dataset <- factor(data$dataset, levels=levels(indata$dataset))
 
 h <- max(data$total)
 hmax <- ceiling(h/100) * 100
@@ -249,6 +250,7 @@ data <- dplyr::bind_rows(lapply(
                    lapply(gbc.list, countSubjectsByCoverage, min.match=mm),
                    data.frame),
                    .id="dataset")
+data$dataset <- factor(data$dataset, levels=levels(indata$dataset))
 
 p <- ggplot(data=data, aes(x=factor(min.coverage), y=Freq, fill=n.subjects)) +
     geom_bar(stat='identity', position=position_stack()) +
@@ -269,6 +271,7 @@ write.csv(data, gzfile(outfile), row.names=FALSE)
 mm <- 0.75
 message("plot breadth and depth of coverage; mis.match = ", mm)
 data <- dplyr::bind_rows(lapply(gbc.list, data.frame), .id="dataset")
+data$dataset <- factor(data$dataset, levels=levels(indata$dataset))
 
 p <- ggplot(data=data, aes(x=coverage, y=depthOfCoverage / breadthOfCoverage,
                            color=factor(n.subjects))) + geom_point(size=1.5) +
