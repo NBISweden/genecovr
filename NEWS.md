@@ -1,3 +1,7 @@
+# Release 0.0.0.9012
+
+- adjust factor levels for number of inserts (#4)
+
 # Release 0.0.0.9011
 
 - fix order of factors
