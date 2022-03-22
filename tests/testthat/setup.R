@@ -93,8 +93,39 @@ ap4 <- AlignmentPairs(
                                                        end = c(400, 400, 200, 225, 310, 380, 310)),
                                  seqnames = c("ctg4.1", "ctg4.1", "ctg4.2", "ctg4.3", "ctg4.3", "ctg4.4", "ctg4.5"),
                                  seqinfo = GenomeInfoDb::Seqinfo(seqnames = c("ctg4.1", "ctg4.2", "ctg4.3", "ctg4.4", "ctg4.5"),
-                                                                 seqlengths = c(500, 250, 400, 500, 400))),
+                                                                 seqlengths = c(500, 250, 400, 500, 400)),
+                                 NumInsert = c(),
+                                 BaseInsert = c(),
+                             ),
     matches = c(90, 90, 4, 100, 60, 160, 10))
+
+
+##############################
+## AlignmentPairs with numinserts
+##############################
+ap5 <- AlignmentPairs(
+    query = GenomicRanges::GRanges(
+                               ranges = IRanges::IRanges(
+                                                     start = c(1, 81, 10, 90, 1, 50, 150),
+                                                     end = c(80, 100, 100, 110, 100, 170, 200)),
+                               seqnames = c("t5.1", "t5.1", "t5.2", "t5.2", "t5.3", "t5.3", "t5.3"),
+                               seqinfo = GenomeInfoDb::Seqinfo(seqnames = c("t5.1", "t5.2", "t5.3"),
+                                                               seqlengths = c(100, 110, 200)),
+                               NumInsert = c(2, 0, 1, 4, 2, 3, 0),
+                               BaseInsert = c(2, 0, 2, 6, 3, 3, 0),
+                           ),
+    subject = GenomicRanges::GRanges(
+                                 ranges = IRanges::IRanges(
+                                                       start = c(300, 401, 100, 200, 221, 200, 300),
+                                                       end = c(380, 420, 190, 220, 320, 320, 350)),
+                                 seqnames = c("ctg5.1", "ctg5.1", "ctg5.2", "ctg5.3", "ctg5.3", "ctg5.4", "ctg5.5"),
+                                 seqinfo = GenomeInfoDb::Seqinfo(seqnames = c("ctg5.1", "ctg5.2", "ctg5.3", "ctg5.4", "ctg5.5"),
+                                                                 seqlengths = c(500, 250, 400, 500, 400)),
+                                 NumInsert = c(5, 1, 1, 5, 4, 3, 0),
+                                 BaseInsert = c(6, 2, 1, 6, 4, 5, 0),
+                             ),
+    matches = c(78, 20, 90, 5, 97, 116, 50)
+)
 
 
 

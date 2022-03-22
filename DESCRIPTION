@@ -1,6 +1,6 @@
 Package: genecovr
 Title: Gene body coverage analysis to evaluate genome assemblies
-Version: 0.0.0.9011
+Version: 0.0.0.9012
 Authors@R: 
     person(given = "Per",
            family = "Unneberg",
@@ -15,6 +15,7 @@ Encoding: UTF-8
 LazyData: true
 Imports:
 	BiocGenerics,
+	BiocParallel,
 	Biostrings,
 	GenomeInfoDb,
 	GenomicRanges (>= 1.32.0),
@@ -35,4 +36,4 @@ Suggests:
 VignetteBuilder:
 	knitr
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2

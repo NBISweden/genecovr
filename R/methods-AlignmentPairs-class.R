@@ -255,7 +255,7 @@ depthOfCoverage <- function(x) {
 ##' @rdname geneBodyCoverage
 ##' @export
 ##'
-##' @param x AlignmentPairs object
+##' @param obj AlignmentPairs object
 ##' @param min.match filter out hits with fraction matching bases less
 ##'     than min.match
 ##'
@@ -284,11 +284,11 @@ depthOfCoverage <- function(x) {
 ##'     hit, and hitStart and hitEnd provide the transcript
 ##'     coordinates of these hits.
 ##'
-geneBodyCoverage <- function(x, min.match=0.9) {
-    stopifnot(inherits(x, "AlignmentPairs"))
+setMethod("geneBodyCoverage", signature = c("AlignmentPairs"),
+          definition = function(obj, min.match=0.9) {
     message("Calculating gene body coverage for ",
-            summary(x), ", min.match ", min.match)
-    x <- subset(x, matches(x) / width(query(x)) > min.match)
+            summary(obj), ", min.match ", min.match)
+    x <- subset(obj, matches(obj) / width(query(obj)) > min.match)
     y <- reduce(query(x), with.revmap=TRUE, ignore.strand=TRUE)
     grl <- split(query(x), seqnames(query(x)))
     revmapToList <- function(x) unique(unlist(x$revmap))
@@ -304,10 +304,14 @@ geneBodyCoverage <- function(x, min.match=0.9) {
     )
     data$coverage <- data$breadthOfCoverage / data$seqlengths
     data$revmap.count <- unlist(lapply(data$revmap, length))
+    numinsert <- function(i) sum(insertions(query(x)[i]))
+    data$NumInsert <- unlist(lapply(data$revmap, numinsert))
+    baseinsert <- function(i) sum(insertions(query(x)[i], as.bases=TRUE))
+    data$BaseInsert <- unlist(lapply(data$revmap, baseinsert))
     data$n.subjects <- unlist(lapply(data$revmap, function(j) {length(seqnames(sbjct(x[j])))}))
     metadata(data) <- list(analysis="geneBodyCoverage", min.match=min.match)
     data
-}
+})
 
 
 ##' summarizeGeneBodyCoverage

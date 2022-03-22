@@ -184,10 +184,7 @@ save_plot(p, outfile)
 
 ## FIXME: number of levels should be parametrized via option
 outfile <- file.path(outdir, "qnuminsert")
-x <- as.data.frame(apl)
-x$cuts <- cut(x$query.NumInsert, c(0:4, Inf), include.lowest=TRUE)
-levels(x$cuts) <- c(0:3, ">3")
-x$cuts <- factor(x$cuts, levels=c(">3", 3:0))
+x <- insertionSummary(apl, reduce=FALSE)
 p <- ggplot(x, aes(id)) +
     geom_bar(aes(fill=cuts)) +
     scale_fill_viridis_d(name="qNumInsert", begin=1, end=0)
@@ -198,6 +195,23 @@ save_plot(p, outfile)
 ## Save psl data
 ##--------------------
 outfile <- file.path(outdir, "psldata.csv.gz")
+message("saving ", outfile)
+write.csv(x, file=gzfile(outfile), row.names=FALSE)
+
+## Also make plot based on gbc
+suppressPackageStartupMessages(library(dplyr))
+outfile <- file.path(outdir, "qnuminsert.gbc")
+x <- insertionSummary(apl)
+p <- ggplot(x, aes(id)) +
+    geom_bar(aes(fill=cuts)) +
+    scale_fill_viridis_d(name="qNumInsert", begin=1, end=0)
+save_plot(p, outfile)
+
+
+##--------------------
+## Save gbc data
+##--------------------
+outfile <- file.path(outdir, "gbcdata.csv.gz")
 message("saving ", outfile)
 write.csv(x, file=gzfile(outfile), row.names=FALSE)
 
@@ -215,8 +229,6 @@ gbc.summary <- bplapply(gbc, function(x) {
     y <- do.call("rbind", lapply(x, summarizeGeneBodyCoverage))
 })
 
-
-suppressPackageStartupMessages(library(dplyr))
 data <- dplyr::bind_rows(lapply(gbc.summary, data.frame), .id="dataset")
 data$dataset <- factor(data$dataset, levels=levels(indata$dataset))
 
