@@ -1,6 +1,7 @@
 # Release 0.0.0.9012
 
 - adjust factor levels for number of inserts (#4)
+- summarize number of inserts by transcript (#5)
 
 # Release 0.0.0.9011
 

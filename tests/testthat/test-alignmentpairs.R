@@ -44,3 +44,15 @@ test_that("countSubjectsByCoverage generates correct table", {
     y <- countSubjectsByCoverage(ap4, min.coverage=c(0.9, 0.95, 1.0))
     expect_equal(subset(y, n.subjects == "filtered")$Freq, c(3, 1))
 })
+
+test_that("numinsert levels are correct", {
+    apl <- AlignmentPairsList(list(ap5))
+    x <- insertionSummary(apl, reduce=FALSE)
+    expect_equal(as.character(x$cuts), c("2", "0", "1", ">3", "2", "3", "0"))
+    x <- insertionSummary(apl)
+    expect_equal(as.character(x$cuts), c("2", "1", ">3"))
+    expect_equal(x$NumInsert, c(2, 1, 5))
+    x <- insertionSummary(apl, min.match=0.1)
+    expect_equal(as.character(x$cuts), c("2", ">3", ">3"))
+    expect_equal(x$NumInsert, c(2, 5, 5))
+})

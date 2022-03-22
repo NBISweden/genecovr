@@ -197,3 +197,18 @@ setGeneric("repmatches", function(x, ...) standardGeneric("repmatches"))
 setGeneric("AlignmentPairsList", signature = c("obj"),
            function(obj, ...)
     standardGeneric("AlignmentPairsList"))
+
+##' Get gene body coverage
+##'
+##' \code{geneBodyCoverage(obj, ...)}: calculate gene body coverage from input
+##'
+##' @param obj alignment object
+##' @param ... additional parameters
+##'
+##'
+##' @export
+##' @rdname geneBodyCoverage
+##'
+setGeneric("geneBodyCoverage", signature = c("obj"),
+           function(obj, ...)
+    standardGeneric("geneBodyCoverage"))

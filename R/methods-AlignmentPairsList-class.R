@@ -25,10 +25,69 @@ setMethod("AlignmentPairsList", "list",
 ##'
 setMethod("as.data.frame", signature = "AlignmentPairsList",
           function(x, ..., .id="id") {
-    data <- dplyr::bind_rows(lapply(x, as.data.frame, ...), .id = .id)
+    data <- bind_rows(lapply(x, as.data.frame, ...), .id = .id)
     if (!is.null(names(x)))
         data[[.id]] <- factor(data[[.id]], levels=names(x))
     data
+})
+
+
+
+##' insertionSummary
+##'
+##' @description Summarize insertions
+##'
+##' @details Summarize number of insertions
+##'
+##' @param x AlignmentPairsList object
+##' @param reduce reduce data to transcripts
+##' @param bpparam biocparallel parameters
+##' @param ... additional parameters
+##'
+##' @return data.frame
+##'
+##'
+##' @export
+##' @rdname insertionSummary
+##'
+##' @examples
+##' fn <- system.file("extdata", "transcripts2polished.psl",
+##'       package="genecovr")
+##' x <- AlignmentPairsList(list(readPsl(fn)))
+##' insertionSummary(x)
+##'
+insertionSummary <- function(x, reduce=TRUE, bpparam=NULL, ...) {
+    stopifnot(inherits(x, "AlignmentPairsList"))
+    if (reduce) {
+        x <- geneBodyCoverage(x, bpparam=bpparam, ...)
+    } else {
+        x <- as.data.frame(x)
+        colnames(x) <- gsub("query.", "", colnames(x))
+    }
+    x$cuts <- cut(x$NumInsert, c(-1:3, Inf), include.lowest=FALSE)
+    levels(x$cuts) <- c(0:3, ">3")
+    x$cuts <- factor(x$cuts, levels=c(">3", 3:0))
+    x
+}
+
+##' geneBodyCoverage
+##' @rdname geneBodyCoverage
+##'
+##' @param bpparam BiocParallel parameter object
+##'
+##' @importFrom BiocParallel bplapply
+##' @importFrom dplyr bind_rows
+##'
+setMethod("geneBodyCoverage", signature = c("AlignmentPairsList"),
+          definition = function(obj, min.match=0.9, bpparam=NULL) {
+    if (is.null(bpparam)) {
+        gbc <- lapply(obj, function(x) {geneBodyCoverage(x, min.match=min.match)})
+    } else {
+        gbc <- BiocParallel::bplapply(obj, function(x) {geneBodyCoverage(x, min.match=min.match)},
+                                      BPPARAM=bpparam)
+    }
+    x <- bind_rows(lapply(gbc, data.frame), .id="id")
+    x
 })
 
 
