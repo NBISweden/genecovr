@@ -87,6 +87,8 @@ setMethod("geneBodyCoverage", signature = c("AlignmentPairsList"),
                                       BPPARAM=bpparam)
     }
     x <- bind_rows(lapply(gbc, data.frame), .id="id")
+    if (!is.null(names(apl)))
+        x[["id"]] <- factor(x[["id"]], levels=names(apl))
     x
 })
 
