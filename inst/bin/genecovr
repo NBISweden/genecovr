@@ -211,9 +211,9 @@ save_plot(p, outfile)
 ##--------------------
 ## Save gbc data
 ##--------------------
-outfile <- file.path(outdir, "gbcdata.csv.gz")
+outfile <- file.path(outdir, "gbcdata.tsv.gz")
 message("saving ", outfile)
-write.csv(x, file=gzfile(outfile), row.names=FALSE)
+write.table(x, file=gzfile(outfile), row.names=FALSE, sep="\t")
 
 
 ##------------------------------
