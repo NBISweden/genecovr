@@ -1,3 +1,8 @@
+# Release 0.0.0.9013
+
+- fix factor level ordering for geneBodyCoverage plot
+- save geneBodyCoverage as tsv
+
 # Release 0.0.0.9012
 
 - adjust factor levels for number of inserts (#4)
