@@ -13,7 +13,7 @@ setMethod("AlignmentPairs", signature = c("GRanges", "GRanges"),
     if (!missing(...)) {
         elementMetadata <- DataFrame(...)
     } else {
-        elementMetadata <- new("DataFrame", nrows = length(query))
+        elementMetadata <- new("DFrame", nrows = length(query))
     }
     elementMetadata$query <- query
     elementMetadata$subject <- subject
