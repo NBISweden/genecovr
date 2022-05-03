@@ -317,3 +317,11 @@ save_plot(p, outfile)
 outfile <- file.path(outdir, "gene_body_coverage.csv.gz")
 message("saving ", outfile)
 write.csv(data, gzfile(outfile), row.names=FALSE)
+
+
+##############################
+## Save Rdata of analysis
+##############################
+outfile <- file.path(outdir, "genecovr.RData")
+message("saving ", outfile)
+save.image(file=outfile)
