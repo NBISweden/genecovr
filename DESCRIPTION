@@ -24,7 +24,8 @@ Imports:
 	methods,
 	rlang,
 	tidyr,
-	utils
+	utils,
+	viridis
 Suggests:
 	knitr,
 	rmarkdown,
