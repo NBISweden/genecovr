@@ -1,0 +1,52 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: check-merge-conflict
+      - id: debug-statements
+      - id: mixed-line-ending
+      - id: detect-private-key
+      - id: check-case-conflict
+      - id: check-yaml
+      - id: trailing-whitespace
+  - repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: v0.11.0
+    hooks:
+      - id: markdownlint-cli2
+        files: \.(md|qmd)$
+        types: [file]
+        exclude: LICENSE.md
+      - id: markdownlint-cli2-fix
+        files: \.(md|qmd)$
+        types: [file]
+        exclude: LICENSE.md
+  - repo: https://github.com/lorenzwalthert/precommit
+    rev: v0.3.2.9027
+    hooks:
+      - id: style-files
+        name: style-files
+        description: style files with {styler}
+        entry: Rscript inst/hooks/exported/style-files.R
+        language: r
+        files: '(\.[rR]profile|\.[rR]|\.[rR]md|\.[rR]nw|\.[qQ]md)$'
+        exclude: |
+          (?x)^(
+          renv/activate\.R|
+          )$
+        minimum_pre_commit_version: "2.13.0"
+      - id: parsable-R
+        name: parsable-R
+        description: check if a .R file is parsable
+        entry: Rscript inst/hooks/exported/parsable-R.R
+        language: r
+        files: '\.[rR](md)?$'
+        minimum_pre_commit_version: "2.13.0"
+      - id: lintr
+        args: [--warn_only]
+        name: lintr
+        description: check if a `.R` file is lint free (using {lintr})
+        entry: Rscript inst/hooks/exported/lintr.R
+        language: r
+        files: '(\.[rR]profile|\.R|\.Rmd|\.Rnw|\.r|\.rmd|\.rnw)$'
+        exclude: 'renv/activate\.R'
+        minimum_pre_commit_version: "2.13.0"

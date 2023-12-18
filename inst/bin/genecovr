@@ -131,6 +131,7 @@ apl <- AlignmentPairsList(
                 seqinfo.query=transcripts.sinfo[[x]])
     }, BPPARAM=bpparam)
 )
+
 names(apl) <- names(psl.fn)
 
 ##------------------------------
@@ -183,8 +184,9 @@ save_plot(p, outfile)
 
 
 ## FIXME: number of levels should be parametrized via option
+suppressPackageStartupMessages(library(dplyr))
 outfile <- file.path(outdir, "qnuminsert")
-x <- insertionSummary(apl, reduce=FALSE)
+x <- dplyr::tibble(insertionSummary(apl, reduce=FALSE))
 p <- ggplot(x, aes(id)) +
     geom_bar(aes(fill=cuts)) +
     scale_fill_viridis_d(name="qNumInsert", begin=1, end=0)
@@ -199,9 +201,8 @@ message("saving ", outfile)
 write.csv(x, file=gzfile(outfile), row.names=FALSE)
 
 ## Also make plot based on gbc
-suppressPackageStartupMessages(library(dplyr))
 outfile <- file.path(outdir, "qnuminsert.gbc")
-x <- insertionSummary(apl)
+x <- dplyr::tibble(insertionSummary(apl))
 p <- ggplot(x, aes(id)) +
     geom_bar(aes(fill=cuts)) +
     scale_fill_viridis_d(name="qNumInsert", begin=1, end=0)
@@ -211,6 +212,10 @@ save_plot(p, outfile)
 ##--------------------
 ## Save gbc data
 ##--------------------
+x$revmap <- as.character(x$revmap)
+x$hitCoverage <- as.character(x$hitCoverage)
+x$hitStart <- as.character(x$hitStart)
+x$hitEnd <- as.character(x$hitEnd)
 outfile <- file.path(outdir, "gbcdata.tsv.gz")
 message("saving ", outfile)
 write.table(x, file=gzfile(outfile), row.names=FALSE, sep="\t")
@@ -313,11 +318,13 @@ p <- ggplot(data=subset(data, n.subjects>1),
 outfile <- file.path(outdir, paste0("depth_breadth_seqlengths.mm", mm))
 save_plot(p, outfile)
 
-
+data$revmap <- as.character(data$revmap)
+data$hitCoverage <- as.character(data$hitCoverage)
+data$hitStart <- as.character(data$hitStart)
+data$hitEnd <- as.character(data$hitEnd)
 outfile <- file.path(outdir, "gene_body_coverage.csv.gz")
 message("saving ", outfile)
-write.csv(data, gzfile(outfile), row.names=FALSE)
-
+write.csv(dplyr::tibble(data), gzfile(outfile), row.names=FALSE)
 
 ##############################
 ## Save Rdata of analysis
