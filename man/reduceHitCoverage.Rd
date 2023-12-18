@@ -27,7 +27,9 @@ being that if there are >1 overlaps for a seqname, the
 sequence is associated with multiple distinct regions in the
 subject sequence. Thus, the unit of interest here is the
 query, and the function seeks to identify reduced disjoint
-regions of a query sequence that map to a subject.\preformatted{The function returns a GRanges object with reduced regions,
+regions of a query sequence that map to a subject.
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{The function returns a GRanges object with reduced regions,
 i.e. overlaps are merged. Information about matches and
 mismatches is currently dropped as it usually is not possible
 to infer where mismatches occur. Instead, the data column
@@ -41,7 +43,7 @@ matches to the width of the region.
 Since the association between query and subject regions is
 removed, the return value is a GRanges object consisting of
 the reduced query ranges with a revmap and coverage attribute.
-}
+}\if{html}{\out{</div>}}
 }
 \examples{
 ranges <- IRanges::IRanges(
