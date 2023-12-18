@@ -14,9 +14,7 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Imports:
-	BiocGenerics,
 	BiocParallel,
-	Biostrings,
 	GenomeInfoDb,
 	GenomicRanges (>= 1.32.0),
 	IRanges,
@@ -26,8 +24,7 @@ Imports:
 	methods,
 	rlang,
 	tidyr,
-	utils,
-	viridis
+	utils
 Suggests:
 	knitr,
 	rmarkdown,
