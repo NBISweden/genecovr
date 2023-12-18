@@ -1,3 +1,4 @@
+skip("Skip on github until resolve issue of testing package binary")
 pkg_path <- getwd()
 tmp <- tempdir(check = TRUE)
 withr::local_dir(tmp)

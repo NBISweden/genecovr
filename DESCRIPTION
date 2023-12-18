@@ -21,7 +21,6 @@ Imports:
 	GenomicRanges (>= 1.32.0),
 	IRanges,
 	S4Vectors,
-	devtools,
 	dplyr,
 	ggplot2,
 	methods,
