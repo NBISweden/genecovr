@@ -106,14 +106,14 @@ output. Before we start with the example analysis, we describe how
 </h3>
 <p><code>genecovr</code> has functionality to read pairwise sequence
 alignment files and converts the pairwise alignments to
-<code>AlignmentPairs</code> objects. An <code>AlignmentPairs</code>
-object is a subclass of the Bioconductor class
-<code><a href="https://rdrr.io/pkg/S4Vectors/man/Pairs-class.html" class="external-link">S4Vectors::Pairs</a></code>. A <code>Pairs</code> object in turn
+<code><a href="../reference/AlignmentPairs-class.html">genecovr::AlignmentPairs</a></code> objects. An
+<code>AlignmentPairs</code> object is a subclass of the Bioconductor
+class <code><a href="https://rdrr.io/pkg/S4Vectors/man/Pairs-class.html" class="external-link">S4Vectors::Pairs</a></code>. A <code>Pairs</code> object in turn
 aligns two vectors along slot names <code>first</code> and
 <code>second</code>, and the <code>AlignmentPairs</code> object adds
 slots for the query and subject, and possibly extra slots related to
 additional information in the alignment file. The query and subject are
-<code>GRanges</code> objects or objects derived from the
+<code><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GenomicRanges::GRanges</a></code> objects or objects derived from the
 <code>GRanges</code>class.</p>
 </div>
 </div>
@@ -127,10 +127,11 @@ gmap files in psl format, <code>transcripts2nonpolished.psl</code> and
 files for both assemblies (<code>nonpolished.fai</code> and
 <code>polished.fai</code>) and for the transcriptome
 (<code>transcripts.fai</code>). The fasta indices are used to generate
-<code>Seqinfo</code> objects that can be used to set sequence
-information on the parsed output. We load the fasta indices and parse
-the psl files with <code>readPsl</code>, storing the results in an
-<code>AlignmentPairsList</code> for convenience.</p>
+<code><a href="https://rdrr.io/pkg/GenomeInfoDb/man/Seqinfo-class.html" class="external-link">GenomeInfoDb::Seqinfo</a></code> objects that can be used to set
+sequence information on the parsed output. We load the fasta indices and
+parse the psl files with <code><a href="../reference/readPsl.html">genecovr::readPsl</a></code>, storing the
+results in an <code><a href="../reference/AlignmentPairsList-class.html">genecovr::AlignmentPairsList</a></code> for
+convenience.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">assembly_fai_fn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>  nonpol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"nonpolished.fai"</span>,</span>
@@ -186,7 +187,7 @@ assembly, as expected.</p>
 <h3 id="plot-summary-indel-and-match-distributions">Plot summary indel and match distributions<a class="anchor" aria-label="anchor" href="#plot-summary-indel-and-match-distributions"></a>
 </h3>
 <p>We can also select multiple columns to plot in the
-<code>AlignmentPairsList</code>.</p>
+<code><a href="../reference/AlignmentPairsList-class.html">genecovr::AlignmentPairsList</a></code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cnames</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"misMatches"</span>, <span class="st">"query.NumInsert"</span>, <span class="st">"query.BaseInsert"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">apl</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">id</span>, y <span class="op">=</span> <span class="fu"><a href="https://rlang.r-lib.org/reference/set_expr.html" class="external-link">get_expr</a></span><span class="op">(</span><span class="fu"><a href="https://rlang.r-lib.org/reference/enquo.html" class="external-link">enquo</a></span><span class="op">(</span><span class="va">cnames</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, which <span class="op">=</span> <span class="st">"violin"</span><span class="op">)</span> <span class="op">+</span></span>
@@ -204,10 +205,10 @@ assembly, as expected.</p>
 <div class="section level3">
 <h3 id="plot-number-of-indels">Plot number of indels<a class="anchor" aria-label="anchor" href="#plot-number-of-indels"></a>
 </h3>
-<p>The function <code>insertionSummary</code> summarizes the number of
-insertions, either at the transcript level (default) or per alignment.
-The intuition is that as assembly quality improves, the number of indels
-go down.</p>
+<p>The function <code>genecovr::insertionSummary</code> summarizes the
+number of insertions, either at the transcript level (default) or per
+alignment. The intuition is that as assembly quality improves, the
+number of indels go down.</p>
 <p>First we show a plot with the number of insertions per alignment. A
 consequence of this is that as a transcript may be split in multiple
 alignments, the bars are of unequal height.</p>
@@ -232,15 +233,15 @@ the fewest number of insertions.</p>
 <div class="section level3">
 <h3 id="gene-body-coverage">Gene body coverage<a class="anchor" aria-label="anchor" href="#gene-body-coverage"></a>
 </h3>
-<p>The function <code>geneBodyCoverage</code> takes an
+<p>The function <code><a href="../reference/geneBodyCoverage.html">genecovr::geneBodyCoverage</a></code> takes an
 <code>AlignmentPairs</code> object and summarizes breadth of coverage
 and number of subject hits per transcript.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gbc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">apl</span>, <span class="va">geneBodyCoverage</span>, min.match <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></code></pre></div>
 <p>A summary can be obtained with the
-<code>summarizeGeneBodyCoverage</code> function. We define a range of
-minimum match hit cutoffs to filter out hits with too few matches in the
-aligned region.</p>
+<code><a href="../reference/summarizeGeneBodyCoverage.html">genecovr::summarizeGeneBodyCoverage</a></code> function. We define a
+range of minimum match hit cutoffs to filter out hits with too few
+matches in the aligned region.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">min.match</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="fl">0.9</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">min.match</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">min.match</span></span>
@@ -273,7 +274,7 @@ aligned region.</p>
 </h3>
 <p>A fragmented assembly will lead to more transcripts mapping to
 several contigs. We calculate the number of subjects by coverage cutoff
-with the function <code>countSubjectsByCoverage</code></p>
+with the function <code><a href="../reference/countSubjectsByCoverage.html">genecovr::countSubjectsByCoverage</a></code></p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/lapply.html" class="external-link">lapply</a></span><span class="op">(</span></span>

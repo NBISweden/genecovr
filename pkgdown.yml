@@ -3,7 +3,7 @@ pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   genecovr: genecovr.html
-last_built: 2023-12-19T08:28Z
+last_built: 2023-12-19T08:54Z
 urls:
   reference: https://nbisweden.github.io/genecovr/reference
   article: https://nbisweden.github.io/genecovr/articles

@@ -61,18 +61,22 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>Perform gene body coverage analyses in R to evaluate genome assembly quality.</p>
+<p><code>genecovr</code> is an <code>R</code> package that provides plotting functions that summarize gene transcript to genome alignments. The main purpose is to assess the effect of polishing and scaffolding operations has on the quality of a genome assembly. The gene transcript set is a large sequence set consisting of assembled transcripts from RNA-seq data generated in relation to a genome assembly project. Therefore, <code>genecovr</code> serves as a complement to software such as <a href="https://busco.ezlab.org/" class="external-link">BUSCO</a>, which evaluates genome assembly quality using a smaller set of well-defined single-copy orthologs.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <p>You can install the released version of genecovr from <a href="https://github.com/nbis" class="external-link">NBIS GitHub</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
+<code class="sourceCode R"><span><span class="co"># If necessary, uncomment to install devtools</span></span>
+<span><span class="co"># install.packages("devtools")</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"NBISweden/genecovr"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="quick-usage">Quick usage<a class="anchor" aria-label="anchor" href="#quick-usage"></a>
+<h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h2>
+<div class="section level3">
+<h3 id="genecovr-script-quick-start">genecovr script quick start<a class="anchor" aria-label="anchor" href="#genecovr-script-quick-start"></a>
+</h3>
 <p>There is a helper script for generating basic plots located in PACKAGE_DIR/bin/genecovr. Create a data input csv-delimited file with columns</p>
 <ol style="list-style-type: decimal">
 <li>data label</li>
@@ -82,11 +86,55 @@
 </ol>
 <p>Columns 3 and 4 can be set to missing value (NA) in which case sequence sizes will be inferred from the alignment files. Then run the script to generate plots:</p>
 <pre class="shell"><code>PACKAGE_DIR/bin/genecovr indata.csv</code></pre>
+<div class="section level4">
+<h4 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
+</h4>
+<p>There are example files located in PACKAGE_DIR/inst/extdata consisting of two psl alignment files containing gmap alignments and fasta indices for the transcript sequences and two for different assembly versions:</p>
+<ul>
+<li>nonpolished.fai - fasta index for raw assembly</li>
+<li>polished.fai - fasta index for polished assembly</li>
+<li>transcripts.fai - fasta index for transcript sequences</li>
+<li>transcripts2nonpolished.psl - gmap alignments, transcripts to raw assembly</li>
+<li>transcripts2polished.psl - gmap alignments, transcripts to polished assembly</li>
+</ul>
+<p>Using these files and the labels <code>non</code> and <code>pol</code> for the different assemblies, a <code>genecovr</code> input file (called e.g., <code>assemblies.csv</code>) would look as follows:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>nonpol,transcripts2nonpolished.psl,nonpolished.fai,transcripts.fai</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>pol,transcripts2polished.psl,polished.fai,transcripts.fai</span></code></pre></div>
+<p>and the command to run would be:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>genecovr assemblies.csv</span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="vignette">Vignette<a class="anchor" aria-label="anchor" href="#vignette"></a>
-</h2>
-<p>Alternatively, import the library as usual in an R script and use the package functions. See the vignette for a minimum working example.</p>
+<div class="section level4">
+<h4 id="genecovr-options">genecovr options<a class="anchor" aria-label="anchor" href="#genecovr-options"></a>
+</h4>
+<p>To list genecovr script options, type ’genecovr -h`:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>usage<span class="sc">:</span> genecovr [<span class="sc">-</span>h] [<span class="sc">-</span>v] [<span class="sc">-</span>p number]</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>                             [<span class="sc">-</span>d OUTPUT_DIRECTORY] [<span class="sc">--</span>height HEIGHT]</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                             [<span class="sc">--</span>width WIDTH]</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                             csvfile</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>positional arguments<span class="sc">:</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  csvfile               csv<span class="sc">-</span>delimited file with columns</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>                            <span class="fl">1.</span> data label</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>                            <span class="fl">2.</span> mapping <span class="fu">file</span> (supported formats<span class="sc">:</span> psl)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>                            <span class="fl">3.</span> assembly <span class="fu">file</span> (fasta or fasta index)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>                            <span class="fl">4.</span> transcript <span class="fu">file</span> (fasta or fasta index)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>optional arguments<span class="sc">:</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span>h, <span class="sc">--</span>help            show this help message and exit</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span>v, <span class="sc">--</span>verbose         print extra output</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span>p number, <span class="sc">--</span>cpus number</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>                        number of cpus [default <span class="dv">1</span>]</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span>d OUTPUT_DIRECTORY, <span class="sc">--</span>output<span class="sc">-</span>directory OUTPUT_DIRECTORY</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>                        output directory</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  <span class="sc">--</span>height HEIGHT       figure height <span class="cf">in</span> inches [default <span class="fl">6.0</span>]</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  <span class="sc">--</span>width WIDTH         figure width <span class="cf">in</span> inches [default <span class="fl">6.0</span>]</span></code></pre></div>
+</div>
+</div>
+<div class="section level3">
+<h3 id="r-package-vignette">R package vignette<a class="anchor" aria-label="anchor" href="#r-package-vignette"></a>
+</h3>
+<p>Alternatively, import the library in an R script and use the package functions. See <a href="articles/genecovr.html">Get started</a> or run <code><a href="articles/genecovr.html">vignette("genecovr")</a></code> for a minimum working example.</p>
+</div>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="license">
