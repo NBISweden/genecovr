@@ -58,14 +58,13 @@ psize <- 3
 ## On object representation of pairwise sequence alignments
 
 `genecovr` has functionality to read pairwise sequence alignment files
-and converts the pairwise alignments to `genecovr::AlignmentPairs`
-objects. An `AlignmentPairs` object is a subclass of the Bioconductor
-class `S4Vectors::Pairs`. A `Pairs` object in turn aligns two vectors
-along slot names `first` and `second`, and the `AlignmentPairs` object
-adds slots for the query and subject, and possibly extra slots related
-to additional information in the alignment file. The query and subject
-are `GenomicRanges::GRanges` objects or objects derived from the
-`GRanges`class.
+and converts the pairwise alignments to `AlignmentPairs` objects. An
+`AlignmentPairs` object is a subclass of the Bioconductor class
+`S4Vectors::Pairs`. A `Pairs` object in turn aligns two vectors along
+slot names `first` and `second`, and the `AlignmentPairs` object adds
+slots for the query and subject, and possibly extra slots related to
+additional information in the alignment file. The query and subject
+are `GRanges` objects or objects derived from the `GRanges`class.
 
 
 # Analysing gene body coverage
@@ -76,10 +75,10 @@ gmap files in psl format, `transcripts2nonpolished.psl` and
 `transcripts2polished.psl`. In addition there are fasta index files
 for both assemblies (`nonpolished.fai` and `polished.fai`) and for the
 transcriptome (`transcripts.fai`). The fasta indices are used to
-generate `GenomeInfoDb::Seqinfo` objects that can be used to set
-sequence information on the parsed output. We load the fasta indices
-and parse the psl files with `genecovr::readPsl`, storing the results
-in an `genecovr::AlignmentPairsList` for convenience.
+generate `Seqinfo` objects that can be used to set sequence
+information on the parsed output. We load the fasta indices and parse
+the psl files with `readPsl`, storing the results in an
+`AlignmentPairsList` for convenience.
 
 ``` {r gbc-load-data}
 assembly_fai_fn <- list(
@@ -158,10 +157,10 @@ plot(apl, aes(x = id, y = get_expr(enquo(cnames))), which = "boxplot") +
 
 ## Plot number of indels
 
-The function `genecovr::insertionSummary` summarizes the number of
-insertions, either at the transcript level (default) or per alignment.
-The intuition is that as assembly quality improves, the number of
-indels go down.
+The function `insertionSummary` summarizes the number of insertions,
+either at the transcript level (default) or per alignment. The
+intuition is that as assembly quality improves, the number of indels
+go down.
 
 First we show a plot with the number of insertions per alignment. A
 consequence of this is that as a transcript may be split in multiple
@@ -189,18 +188,17 @@ ggplot(x, aes(id)) +
 
 ## Gene body coverage
 
-The function `genecovr::geneBodyCoverage` takes an `AlignmentPairs`
-object and summarizes breadth of coverage and number of subject hits
-per transcript.
+The function `geneBodyCoverage` takes an `AlignmentPairs` object and
+summarizes breadth of coverage and number of subject hits per
+transcript.
 
 ``` {r gbc-make-gene-body-coverage}
 gbc <- lapply(apl, geneBodyCoverage, min.match = 0.1)
 ```
 
-A summary can be obtained with the
-`genecovr::summarizeGeneBodyCoverage` function. We define a range of
-minimum match hit cutoffs to filter out hits with too few matches in
-the aligned region.
+A summary can be obtained with the `summarizeGeneBodyCoverage`
+function. We define a range of minimum match hit cutoffs to filter out
+hits with too few matches in the aligned region.
 
 ``` {r gbc-summarize-gene-body-coverage}
 min.match <- c(0.25, 0.5, 0.75, 0.9)
@@ -239,7 +237,7 @@ ggplot(
 
 A fragmented assembly will lead to more transcripts mapping to several
 contigs. We calculate the number of subjects by coverage cutoff with
-the function `genecovr::countSubjectsByCoverage`
+the function `countSubjectsByCoverage`
 
 ```{r gbc-ncontigs-per-transcript}
 data <- dplyr::bind_rows(
