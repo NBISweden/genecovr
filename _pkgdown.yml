@@ -1,0 +1,9 @@
+url: https://nbisweden.github.io/genecovr/
+template:
+  bootstrap: 5
+
+reference:
+  - title: genecovr
+  - contents:
+      - matches(".*")
+

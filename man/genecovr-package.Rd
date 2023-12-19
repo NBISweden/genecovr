@@ -19,6 +19,13 @@ measurement unit is a gene or transcript model.
 autoplot: plot GRanges objects with gene body coverage metrics
 }
 
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://nbisweden.github.io/genecovr/}
+}
+
+}
 \author{
 \strong{Maintainer}: Per Unneberg \email{per.unneberg@nbis.se} (\href{https://orcid.org/0000-0001-5735-3315}{ORCID})
 

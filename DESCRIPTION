@@ -1,7 +1,7 @@
 Package: genecovr
 Title: Gene body coverage analysis to evaluate genome assemblies
-Version: 0.0.0.9013
-Authors@R: 
+Version: 0.1.0
+Authors@R:
     person(given = "Per",
            family = "Unneberg",
            role = c("aut", "cre"),
@@ -14,9 +14,7 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Imports:
-	BiocGenerics,
 	BiocParallel,
-	Biostrings,
 	GenomeInfoDb,
 	GenomicRanges (>= 1.32.0),
 	IRanges,
@@ -36,4 +34,5 @@ Suggests:
 VignetteBuilder:
 	knitr
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
+URL: https://nbisweden.github.io/genecovr/

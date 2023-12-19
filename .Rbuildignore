@@ -4,3 +4,7 @@
 ^scripts$
 ^doc$
 ^Meta$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^tests/testthat.R$
