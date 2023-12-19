@@ -15,11 +15,11 @@ repos:
       - id: markdownlint-cli2
         files: \.(md|qmd)$
         types: [file]
-        exclude: LICENSE.md
+        exclude: (README.md|LICENSE.md)$
       - id: markdownlint-cli2-fix
         files: \.(md|qmd)$
         types: [file]
-        exclude: LICENSE.md
+        exclude: (README.md|LICENSE.md)$
   - repo: https://github.com/lorenzwalthert/precommit
     rev: v0.3.2.9027
     hooks:

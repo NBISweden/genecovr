@@ -118,8 +118,6 @@ optional arguments:
   --width WIDTH         figure width in inches [default 6.0]
 ```
 
-
-
 ### R package vignette
 
 Alternatively, import the library in an R script and use the package
