@@ -123,4 +123,5 @@ optional arguments:
 ### R package vignette
 
 Alternatively, import the library in an R script and use the package
-functions. See the vignette for a minimum working example.
+functions. See [Get started](articles/genecovr.html) or run
+`vignette("genecovr")` for a minimum working example.
