@@ -1,0 +1,66 @@
+---
+title: "Empirical studies"
+author: "Per Unneberg"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Empirical studies}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+biblio-style: plain
+bibliography: bibliography.bib
+---
+
+# Northern krill
+
+`genecovr` was used to assess the quality metrics of the Northern
+krill genome.
+
+To test genecovr with the 19 Gb Northern krill genome and gene data
+(16,509 transcripts of protein coding genes), access the collection in
+the SciLifeLab Data Repository named "Ecological genomics of the
+Northern krill" using the following permanent link:
+
+< URL to be provided >
+
+1. Genome file
+
+Access item: 1. Ecological genomics of the Northern krill: Genome
+assembly DNA sequences
+
+Download: northern_krill.genome_assembly.tar.gz
+
+Extract genome assembly for evaluation:
+1.m_norvegica.main_w_mito.fasta
+
+2. Gene models
+
+Access item: 3. Ecological genomics of the Northern krill: Genome
+assembly annotations (genes and repeats)
+
+Download: trinity_transcript.16509_single_isoforms.cds.fasta.tar.gz
+
+Extract and use transcripts for evaluation:
+trinity_transcript.16509_single_isoforms.cds.fasta
+
+3. gmap alignment
+
+Map transcripts to assembly with gmap:
+
+    # Build index
+	gmap_build --genomedb mnorvegica 1.m_norvegica.main_w_mito.fasta
+    # Map with gmap; format=1 -> psl output
+	gmap -t 12 --dir . --db mnorvegica --format 1 trinity_transcript.16509_single_isoforms.cds.fasta > mnorvegica.psl
+
+4. genecovr input file
+
+Generate a comma-separated file, assemblies.csv, with the following contents:
+
+	main,mnorvegica.psl,1.m_norvegica.main_w_mito.fasta,trinity_transcript.16509_single_isoforms.cds.fasta
+
+and run
+
+	genecovr assemblies.csv
+
+This will generate a number of summary data files along with png and
+pdf plots based on the summary data.
