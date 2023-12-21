@@ -6,7 +6,7 @@ output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Gene body coverage analysis in R}
   %\VignetteEngine{knitr::rmarkdown}
-  \usepackage[utf8]{inputenc}
+  %\VignetteEncoding{UTF-8}
 biblio-style: plain
 bibliography: bibliography.bib
 ---
@@ -71,15 +71,17 @@ are `GenomicRanges::GRanges` objects or objects derived from the
 # Analysing gene body coverage
 
 In this section we analyse the mapping of a transcriptome to a
-non-polished and polished assembly. The mapping results consist of two
-gmap files in psl format, `transcripts2nonpolished.psl` and
-`transcripts2polished.psl`. In addition there are fasta index files
-for both assemblies (`nonpolished.fai` and `polished.fai`) and for the
-transcriptome (`transcripts.fai`). The fasta indices are used to
-generate `GenomeInfoDb::Seqinfo` objects that can be used to set
-sequence information on the parsed output. We load the fasta indices
-and parse the psl files with `genecovr::readPsl`, storing the results
-in an `genecovr::AlignmentPairsList` for convenience.
+non-polished and polished assembly, using example data. The entire
+analysis takes less than 5 minutes to execute using these datasets.
+The mapping results consist of two gmap files in psl format,
+`transcripts2nonpolished.psl` and `transcripts2polished.psl`. In
+addition there are fasta index files for both assemblies
+(`nonpolished.fai` and `polished.fai`) and for the transcriptome
+(`transcripts.fai`). The fasta indices are used to generate
+`GenomeInfoDb::Seqinfo` objects that can be used to set sequence
+information on the parsed output. We load the fasta indices and parse
+the psl files with `genecovr::readPsl`, storing the results in an
+`genecovr::AlignmentPairsList` for convenience.
 
 ``` {r gbc-load-data}
 assembly_fai_fn <- list(

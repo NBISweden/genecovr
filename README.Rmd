@@ -40,6 +40,10 @@ GitHub](https://github.com/nbis) with:
 devtools::install_github("NBISweden/genecovr")
 ```
 
+The tool has been developed and tested on GNU/Linux systems but should
+work on any system that runs `R`. Installation is expected to take at
+most a couple of minutes.
+
 ## Usage
 
 ### genecovr script quick start
