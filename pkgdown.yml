@@ -2,8 +2,9 @@ pandoc: 2.19.2
 pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
+  empirical: empirical.html
   genecovr: genecovr.html
-last_built: 2023-12-19T09:01Z
+last_built: 2023-12-21T13:11Z
 urls:
   reference: https://nbisweden.github.io/genecovr/reference
   article: https://nbisweden.github.io/genecovr/articles

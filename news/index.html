@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">genecovr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -23,6 +23,12 @@
 </li>
 <li class="nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
+</li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/empirical.html">Empirical studies</a>
+  </div>
 </li>
 <li class="active nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
@@ -47,7 +53,59 @@
       <small>Source: <a href="https://github.com/NBISweden/genecovr/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
-  </main></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.1.1" id="genecovr-011">genecovr 0.1.1<a class="anchor" aria-label="anchor" href="#genecovr-011"></a></h2>
+<ul><li>update README</li>
+<li>add Empirical studies section</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.1.0" id="genecovr-010">genecovr 0.1.0<a class="anchor" aria-label="anchor" href="#genecovr-010"></a></h2>
+<ul><li>add pkgdown site</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.0.0.9013" id="genecovr-0009013">genecovr 0.0.0.9013<a class="anchor" aria-label="anchor" href="#genecovr-0009013"></a></h2>
+<ul><li>fix factor level ordering for geneBodyCoverage plot</li>
+<li>save geneBodyCoverage as tsv</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.0.0.9012" id="genecovr-0009012">genecovr 0.0.0.9012<a class="anchor" aria-label="anchor" href="#genecovr-0009012"></a></h2>
+<ul><li>adjust factor levels for number of inserts (<a href="https://github.com/NBISweden/genecovr/issues/4" class="external-link">#4</a>)</li>
+<li>summarize number of inserts by transcript (<a href="https://github.com/NBISweden/genecovr/issues/5" class="external-link">#5</a>)</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.0.0.9011" id="genecovr-0009011">genecovr 0.0.0.9011<a class="anchor" aria-label="anchor" href="#genecovr-0009011"></a></h2>
+<ul><li>fix order of factors</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.0.0.9010" id="genecovr-0009010">genecovr 0.0.0.9010<a class="anchor" aria-label="anchor" href="#genecovr-0009010"></a></h2>
+<ul><li>remove duplicate entries in psl input</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.0.0.9009" id="genecovr-0009009">genecovr 0.0.0.9009<a class="anchor" aria-label="anchor" href="#genecovr-0009009"></a></h2>
+<ul><li>add plot of transcript length distributions conditioned on number of mapped contigs</li>
+<li>fix y axis for histogram plots</li>
+<li>increase point size of some plots</li>
+<li>summarizeGeneBodyCoverage and countSubjectsByCoverage now accept DataFrame inputs, obviating the need to rerun geneBodyCoverage multiple times in genecovr script</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.0.0.9008" id="genecovr-0009008">genecovr 0.0.0.9008<a class="anchor" aria-label="anchor" href="#genecovr-0009008"></a></h2>
+<ul><li>Remove characters trailing first space in fasta headers</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.0.0.9007" id="genecovr-0009007">genecovr 0.0.0.9007<a class="anchor" aria-label="anchor" href="#genecovr-0009007"></a></h2>
+<ul><li>Fix conversion of DNAStringSet to Seqinfo</li>
+<li>Make sure geneBodyCoverage table has nmax levels</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.0.0.9006" id="genecovr-0009006">genecovr 0.0.0.9006<a class="anchor" aria-label="anchor" href="#genecovr-0009006"></a></h2>
+<ul><li>add depthOfCoverage function and analysis to vignette and script</li>
+<li>reduceHitCoverage is deprecated</li>
+<li>improve some docs</li>
+<li>add wrapper for saving plots</li>
+<li>add tests mainly for alignmentpairs and test setup</li>
+</ul><!-- markdownlint-enable MD025 --></div>
+  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">

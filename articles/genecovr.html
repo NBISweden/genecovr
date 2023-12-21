@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">genecovr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,6 +40,12 @@
 </li>
 <li class="nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
+</li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/empirical.html">Empirical studies</a>
+  </div>
 </li>
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
@@ -72,7 +78,7 @@
                         <h4 data-toc-skip class="author">Per
 Unneberg</h4>
             
-            <h4 data-toc-skip class="date">2023-12-19</h4>
+            <h4 data-toc-skip class="date">2023-12-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/NBISweden/genecovr/blob/HEAD/vignettes/genecovr.Rmd" class="external-link"><code>vignettes/genecovr.Rmd</code></a></small>
       <div class="d-none name"><code>genecovr.Rmd</code></div>
@@ -128,8 +134,10 @@ additional information in the alignment file. The query and subject are
 <h2 id="analysing-gene-body-coverage">Analysing gene body coverage<a class="anchor" aria-label="anchor" href="#analysing-gene-body-coverage"></a>
 </h2>
 <p>In this section we analyse the mapping of a transcriptome to a
-non-polished and polished assembly. The mapping results consist of two
-gmap files in psl format, <code>transcripts2nonpolished.psl</code> and
+non-polished and polished assembly, using example data. The entire
+analysis takes less than 5 minutes to execute using these datasets. The
+mapping results consist of two gmap files in psl format,
+<code>transcripts2nonpolished.psl</code> and
 <code>transcripts2polished.psl</code>. In addition there are fasta index
 files for both assemblies (<code>nonpolished.fai</code> and
 <code>polished.fai</code>) and for the transcriptome
